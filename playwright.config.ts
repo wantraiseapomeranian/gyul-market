@@ -7,11 +7,12 @@ const KAKAO_AOS = 'Mozilla/5.0 (Linux; Android 14; SM-S921N) AppleWebKit/537.36 
 
 export default defineConfig({
   testDir: 'tests',
+  workers: 2,
   snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{arg}{ext}',
   expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: 'disabled' } },
   use: { baseURL: 'http://localhost:3000', locale: 'ko-KR', timezoneId: 'Asia/Seoul', colorScheme: 'light' },
   webServer: {
-    command: 'npm run build && npm run start',
+    command: 'npm run start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 240_000,

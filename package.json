@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "eslint .",
     "test:unit": "node --test lib/game.test.ts",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run build && playwright test",
     "test": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
