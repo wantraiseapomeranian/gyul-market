@@ -1,0 +1,107 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  reduce, initialState, assignBrix, gradeOf, readingAt, formatDocDate,
+  BRIX_VALUES, TAPS_REQUIRED, type GameState, type GameEvent, type BrixMap,
+} from './game.ts';
+
+const FIXED: BrixMap = { A: 12.4, B: 14.2, C: 15.8 };
+const run = (s: GameState, ...events: GameEvent[]) => events.reduce((acc, e) => reduce(acc, e), s);
+const sorted = (m: BrixMap) => [m.A, m.B, m.C].sort((x, y) => x - y);
+
+test('assignBrix: 세 값을 한 번씩 배정하고 여섯 가지 배정이 모두 나온다', () => {
+  const seen = new Set<string>();
+  for (const a of [0, 0.5, 0.99]) {
+    for (const b of [0, 0.99]) {
+      const seq = [a, b];
+      let i = 0;
+      const m = assignBrix(() => seq[i++]);
+      assert.deepEqual(sorted(m), [...BRIX_VALUES]);
+      seen.add(`${m.A}/${m.B}/${m.C}`);
+    }
+  }
+  assert.equal(seen.size, 6);
+});
+
+test('assignBrix: 규격 순서와 무관하다 (M 시료가 가장 낮을 수 있다)', () => {
+  assert.deepEqual(assignBrix(() => 0.999), { A: 12.4, B: 14.2, C: 15.8 });
+  assert.deepEqual(assignBrix(() => 0), { A: 14.2, B: 15.8, C: 12.4 });
+});
+
+test('gradeOf: 당도 값으로 등급을 정한다', () => {
+  assert.equal(gradeOf(12.4), '새콤 낚임과');
+  assert.equal(gradeOf(14.2), '달콤 낚임과');
+  assert.equal(gradeOf(15.8), '로얄 낚임과');
+});
+
+test('readingAt: 탭 수에 비례하고 소수 첫째 자리로 반올림, 5회에서 멈춘다', () => {
+  assert.equal(readingAt(15.8, 0), 0);
+  assert.equal(readingAt(12.4, 1), 2.5);
+  assert.equal(readingAt(15.8, 3), 9.5);
+  assert.equal(readingAt(14.2, 5), 14.2);
+  assert.equal(readingAt(15.8, 7), 15.8);
+});
+
+test('formatDocDate: YYYY.MM.DD', () => {
+  assert.equal(formatDocDate(new Date(2026, 10, 5)), '2026.11.05');
+});
+
+test('정상 흐름: 상품 → 선택 → 측정 → 결과 → 판정 → 엔딩', () => {
+  let s = reduce(initialState, { type: 'start', brix: FIXED });
+  assert.equal(s.screen, 'select');
+  assert.equal(s.pick, null);
+  s = run(s, { type: 'pick', fruit: 'C' }, { type: 'begin' });
+  assert.equal(s.screen, 'measure');
+  assert.equal(s.taps, 0);
+  for (let i = 0; i < TAPS_REQUIRED; i++) s = reduce(s, { type: 'tap' });
+  assert.equal(s.taps, 5);
+  assert.equal(s.screen, 'measure');
+  s = run(s, { type: 'finish' });
+  assert.equal(s.screen, 'result');
+  s = run(s, { type: 'judge' });
+  assert.equal(s.screen, 'judging');
+  s = run(s, { type: 'reveal' });
+  assert.equal(s.screen, 'ending');
+  assert.equal(s.brix.C, 15.8);
+});
+
+test('고르기 전에는 측정을 시작할 수 없다', () => {
+  const s = run(initialState, { type: 'start', brix: FIXED }, { type: 'begin' });
+  assert.equal(s.screen, 'select');
+});
+
+test('5회를 넘는 탭은 무시하고, 5회 전에는 결과로 가지 않는다', () => {
+  let s = run(initialState, { type: 'start', brix: FIXED }, { type: 'pick', fruit: 'A' }, { type: 'begin' });
+  for (let i = 0; i < 4; i++) s = reduce(s, { type: 'tap' });
+  assert.equal(reduce(s, { type: 'finish' }).screen, 'measure');
+  for (let i = 0; i < 3; i++) s = reduce(s, { type: 'tap' });
+  assert.equal(s.taps, 5);
+});
+
+test('맞지 않는 화면의 이벤트는 무시한다', () => {
+  const select = reduce(initialState, { type: 'start', brix: FIXED });
+  for (const e of [{ type: 'judge' }, { type: 'reveal' }, { type: 'tap' }, { type: 'finish' }, { type: 'start', brix: FIXED }] as GameEvent[]) {
+    assert.deepEqual(reduce(select, e), select);
+  }
+  assert.deepEqual(reduce(initialState, { type: 'pick', fruit: 'A' }), initialState);
+});
+
+test('뒤로: 선택 → 상품(선택 해제), 측정 → 선택(탭 초기화, 선택 유지), 결과에서는 무시', () => {
+  let s = run(initialState, { type: 'start', brix: FIXED }, { type: 'pick', fruit: 'B' });
+  assert.deepEqual(reduce(s, { type: 'back' }), { ...s, screen: 'product', pick: null });
+  s = run(s, { type: 'begin' }, { type: 'tap' }, { type: 'tap' }, { type: 'back' });
+  assert.equal(s.screen, 'select');
+  assert.equal(s.taps, 0);
+  assert.equal(s.pick, 'B');
+  s = run(s, { type: 'begin' }, ...Array<GameEvent>(5).fill({ type: 'tap' }), { type: 'finish' });
+  assert.deepEqual(reduce(s, { type: 'back' }), s);
+});
+
+test('다시 검사: 결과·엔딩 → 선택, 당도 재배정, 선택·탭 초기화', () => {
+  const NEW: BrixMap = { A: 15.8, B: 12.4, C: 14.2 };
+  const result = run(initialState, { type: 'start', brix: FIXED }, { type: 'pick', fruit: 'C' }, { type: 'begin' },
+    ...Array<GameEvent>(5).fill({ type: 'tap' }), { type: 'finish' });
+  for (const s of [result, run(result, { type: 'judge' }, { type: 'reveal' })]) {
+    assert.deepEqual(reduce(s, { type: 'retry', brix: NEW }), { screen: 'select', brix: NEW, pick: null, taps: 0 });
+  }
+});
