@@ -60,6 +60,7 @@ export function EndingScreen({ s, dispatch, headingRef, today }: ScreenProps) {
           <button onClick={copyLink}>{copy === 'done' ? '복사했어요' : '링크 복사'}</button>
           <button onClick={() => dispatch({ type: 'retry', brix: assignBrix(Math.random) })}>다시 검사하기</button>
         </div>
+        <p className="sr-only" role="status">{copy === 'done' ? '링크를 복사했어요' : ''}</p>
         {copy === 'manual' ? (
           <label className="share-manual block">
             링크를 길게 눌러 복사하세요

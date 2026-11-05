@@ -103,8 +103,8 @@
   .doc-head p { font-size: 11px; line-height: 1.5; text-align: right; color: var(--color-mute); font-variant-numeric: tabular-nums; }
   .doc-meta { display: flex; justify-content: space-between; padding: 7px 13px; font-size: 12px; color: var(--color-ink-2); border-bottom: 1px solid var(--color-ink); }
   .sheet { min-width: 0; margin: 0; padding: 0; border: 0; }
-  .sheet-row { display: grid; grid-template-columns: 40px 94px 52px 1fr 44px; align-items: center; padding: 9px 0 9px 13px; border-bottom: 1px solid var(--color-line); font-variant-numeric: tabular-nums; }
-  .sheet[data-mode="result"] .sheet-row { grid-template-columns: 40px 94px 52px 1fr; }
+  .sheet-row { display: grid; grid-template-columns: 27px 94px 52px 1fr 44px; align-items: center; padding: 9px 0 9px 13px; border-bottom: 1px solid var(--color-line); font-variant-numeric: tabular-nums; }
+  .sheet[data-mode="result"] .sheet-row { grid-template-columns: 27px 94px 52px 1fr; }
   .sheet-row:last-child { border-bottom: 0; }
   .sheet-th { padding-top: 7px; padding-bottom: 6px; font-size: 11px; font-weight: 500; color: var(--color-mute); }
   label.sheet-row { cursor: pointer; }

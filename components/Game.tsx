@@ -15,10 +15,13 @@ export function Game({ product }: { product: ReactNode }) {
   // ponytail: 자정을 넘겨 계속 플레이해도 날짜는 첫 렌더 기준. 20초 체험이라 갱신하지 않는다
   const [today] = useState(() => formatDocDate(new Date()));
 
-  // 화면이 바뀌면 맨 위로 + 제목에 초점 (DESIGN §10)
+  // 화면이 바뀌면 맨 위로 + 제목에 초점 (DESIGN §10). 첫 진입(상품)에서는 초점을 옮기지 않는다
+  const firstRender = useRef(true);
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (s.screen !== 'product') headingRef.current?.focus();
+    if (firstRender.current) { firstRender.current = false; return; }
+    if (s.screen === 'product') document.getElementById('product-title')?.focus();
+    else headingRef.current?.focus();
   }, [s.screen]);
 
   // 5번째 탭 450ms 뒤 결과로 (DESIGN §6)

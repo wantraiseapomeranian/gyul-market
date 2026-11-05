@@ -16,7 +16,7 @@ export function ProductPage() {
       </div>
       <section className="head" aria-label="상품 정보">
         <p className="brand-line">귤상회 선과장</p>
-        <h1 className="title">제주 서귀포 햇귤 10kg</h1>
+        <h1 className="title" id="product-title" tabIndex={-1}>제주 서귀포 햇귤 10kg</h1>
         <p className="desc">노지 온주밀감 · 2S~M 크기 혼합</p>
         <p className="price"><strong>29,900</strong><span className="won">원</span><span className="unit">100g당 299원</span></p>
       </section>

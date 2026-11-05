@@ -44,6 +44,11 @@ test.describe('② 귤 선택', () => {
     await expect(page.getByRole('heading', { name: '당도 검사', exact: true })).toBeFocused();
   });
 
+  test('뒤로 가면 상품 제목에 초점이 간다', async ({ page }) => {
+    await page.getByRole('button', { name: '상품으로 돌아가기' }).click();
+    await expect(page.getByRole('heading', { level: 1, name: '제주 서귀포 햇귤 10kg' })).toBeFocused();
+  });
+
   test('뒤로 가면 상품으로 돌아가고 선택이 풀린다', async ({ page }) => {
     await pickRow(page, 'A').click();
     await page.getByRole('button', { name: '상품으로 돌아가기' }).click();
