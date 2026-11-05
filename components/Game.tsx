@@ -6,6 +6,7 @@ import { SelectScreen } from './screens/SelectScreen';
 import { MeasureScreen } from './screens/MeasureScreen';
 import { ResultScreen } from './screens/ResultScreen';
 import { JudgingScreen } from './screens/JudgingScreen';
+import { EndingScreen } from './screens/EndingScreen';
 
 export function Game({ product }: { product: ReactNode }) {
   const [s, dispatch] = useReducer(reduce, initialState);
@@ -58,7 +59,7 @@ export function Game({ product }: { product: ReactNode }) {
       return <ResultScreen {...props} />;
     case 'judging':
       return <JudgingScreen headingRef={headingRef} />;
-    default:
-      return null; // Task 6~8에서 measure·result·judging·ending을 채운다
+    case 'ending':
+      return <EndingScreen {...props} />;
   }
 }

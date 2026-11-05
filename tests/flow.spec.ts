@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { open, toSelect, pickRow, toMeasure, tapFruit, toResult, toJudging } from './helpers';
+import { open, toSelect, pickRow, toMeasure, tapFruit, toResult, toJudging, toEnding } from './helpers';
 
 test.describe('① 상품 상세', () => {
   test.beforeEach(async ({ page }) => { await open(page); });
@@ -125,5 +125,56 @@ test.describe('④ 결과 · ⑤ 판정 전환', () => {
     await toJudging(page);
     await page.clock.runFor(850);
     await expect(page.getByRole('heading', { name: '귤은 없습니다.' })).toBeVisible();
+  });
+});
+
+test.describe('⑥ 엔딩 · 공유', () => {
+  test('판정서 내용과 고지', async ({ page }) => {
+    await open(page);
+    await toEnding(page);
+    for (const t of ['로얄 낚임과', '귤 0kg', '0원', 'C · 규격 M', '2026.11.05']) await expect(page.getByText(t)).toBeVisible();
+    await expect(page.getByText(/가상의 상점입니다/)).toBeVisible();
+  });
+
+  test('Web Share: 사이트 루트를 결과 없이 공유한다', async ({ page }) => {
+    await page.addInitScript(() => {
+      (window as unknown as { __shared: unknown[] }).__shared = [];
+      Object.defineProperty(navigator, 'share', { value: async (d: unknown) => { (window as unknown as { __shared: unknown[] }).__shared.push(d); } });
+    });
+    await open(page);
+    await toEnding(page);
+    await page.getByRole('button', { name: '친구도 검사받게 하기' }).click();
+    const shared = await page.evaluate(() => (window as unknown as { __shared: { url: string; text: string }[] }).__shared);
+    expect(shared).toHaveLength(1);
+    expect(shared[0].url).toBe('http://localhost:3000/');
+    expect(shared[0].text).not.toMatch(/낚|없습니다|판정/);
+  });
+
+  test('Web Share가 없으면 클립보드로 복사한다', async ({ page, context, browserName }) => {
+    test.skip(browserName === 'webkit', 'WebKit은 clipboard-write 권한을 지원하지 않는다');
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.addInitScript(() => { Object.defineProperty(navigator, 'share', { value: undefined }); });
+    await open(page);
+    await toEnding(page);
+    await page.getByRole('button', { name: '친구도 검사받게 하기' }).click();
+    await expect(page.getByRole('button', { name: '복사했어요' })).toBeVisible();
+  });
+
+  test('복사도 실패하면 링크를 직접 보여 준다', async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'share', { value: undefined });
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText: () => Promise.reject(new Error('blocked')) } });
+    });
+    await open(page);
+    await toEnding(page);
+    await page.getByRole('button', { name: '링크 복사' }).click();
+    await expect(page.getByRole('textbox', { name: '공유 링크' })).toHaveValue('http://localhost:3000/');
+  });
+
+  test('다시 검사하기는 선택 화면으로 간다', async ({ page }) => {
+    await open(page);
+    await toEnding(page);
+    await page.getByRole('button', { name: '다시 검사하기' }).click();
+    await expect(page.getByRole('heading', { name: '당도 검사', exact: true })).toBeVisible();
   });
 });
