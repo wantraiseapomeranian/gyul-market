@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>귤상회 선과장 v2</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600;700&display=swap">
+<style>
+:root{
+  --ink:#141414; --t2:#474747; --mute:#6c6c6c; --line:#e7e7e7; --band:#f3f3f3;
+  --red:#b4152b; /* 인장·도장·주요 버튼에만 */
+  --serif:'Hahmlet','Nanum Myeongjo',serif;
+  --sans:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --bar:78px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--ink);background:#fff;word-break:keep-all;-webkit-font-smoothing:antialiased;line-height:1.5;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+img{display:block;width:100%}
+svg{display:block}
+.screen{display:none}
+html[data-screen="product"] .s-product,html[data-screen="select"] .s-select,html[data-screen="result"] .s-result,
+html[data-screen="judging"] .s-judging,html[data-screen="ending"] .s-ending{display:block}
+html[data-screen="measure"] .s-measure{display:flex;flex-direction:column;height:100vh}
+
+/* 공통 머리 */
+.hd{height:52px;display:flex;align-items:center;padding:0 6px 0 16px;background:#fff;position:sticky;top:0;z-index:5}
+.wm{display:flex;align-items:center;gap:7px;font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:-.03em;line-height:1}
+.seal{width:19px;height:19px;background:var(--red);color:#fff;font-family:var(--serif);font-weight:700;font-size:12px;display:grid;place-items:center;filter:url(#ink-soft)}
+.sp{flex:1}
+.ic{width:40px;height:40px;display:grid;place-items:center}
+.hd2{height:52px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:0 2px;background:#fff;position:sticky;top:0;z-index:5}
+.hd2 h2{text-align:center;font-size:16px;font-weight:600}
+
+/* 도장(인주 질감) */
+.stamp{color:var(--red);border:2px solid var(--red);font-family:var(--serif);font-weight:700;text-align:center;display:grid;place-items:center;filter:url(#ink);mix-blend-mode:multiply;opacity:.96}
+.stamp.round{border-radius:50%}
+
+/* 선별 태그 */
+.gallery{position:relative}
+.gallery>img{aspect-ratio:1;object-fit:cover}
+.count{position:absolute;right:12px;bottom:12px;background:rgba(0,0,0,.5);color:#fff;font-size:12px;padding:3px 9px;border-radius:10px;font-variant-numeric:tabular-nums}
+.tagwrap{position:absolute;left:16px;bottom:20px;transform:rotate(-3deg);filter:drop-shadow(0 1px 1px rgba(0,0,0,.28)) drop-shadow(0 8px 14px rgba(0,0,0,.2))}
+.cord{position:absolute;left:58px;top:-64px;overflow:visible}
+.tag{position:relative;width:158px;background:#fff;padding:27px 12px 10px;clip-path:polygon(16px 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%,0 16px)}
+.tag .hole{position:absolute;top:8px;left:50%;margin-left:-5px;width:10px;height:10px;border-radius:50%;background:#3b4148;box-shadow:0 0 0 2.5px #fff,0 0 0 4px #ddd5c8}
+.t-top{display:flex;justify-content:space-between;align-items:baseline;font-size:9.5px;color:var(--mute);font-weight:600;font-variant-numeric:tabular-nums}
+.t-top b{font-family:var(--serif);font-weight:700;font-size:11px;color:var(--ink)}
+.t-kind{font-size:16px;font-weight:800;letter-spacing:-.04em;margin-top:2px}
+.t-rows{margin-top:5px;border-top:1.5px solid var(--ink)}
+.t-rows div{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid #ececec}
+.t-rows div:last-child{border-bottom:0}
+.t-rows dt{color:var(--mute)}
+.t-no{font-size:9.5px;color:var(--mute);margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.t-rows dd{font-weight:700;font-variant-numeric:tabular-nums}
+.tag .stamp{position:absolute;right:6px;top:22px;width:40px;height:40px;font-size:11px;line-height:1.05;transform:rotate(-14deg)}
+
+/* 상품 */
+.head{padding:18px 16px 20px}
+.brandlink{display:inline-flex;align-items:center;font-size:13px;color:var(--t2)}
+.title{font-size:20px;font-weight:700;letter-spacing:-.035em;line-height:1.4;margin-top:5px}
+.desc{font-size:14px;color:var(--mute);margin-top:1px}
+.price{margin-top:14px;display:flex;align-items:baseline}
+.price strong{font-size:25px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.price .won{font-size:18px;font-weight:700;margin-left:1px}
+.price .unit{font-size:12.5px;color:var(--mute);margin-left:8px}
+.band{height:8px;background:var(--band)}
+.info{padding:10px 16px 6px}
+.info div{display:grid;grid-template-columns:58px 1fr;padding:8px 0;font-size:14px}
+.info dt{color:var(--mute);font-size:13.5px}
+.info dd small{display:block;color:var(--mute);font-size:12.5px;margin-top:1px}
+.story{padding:36px 16px 0}
+.story h3{font-family:var(--serif);font-weight:700;font-size:21px;line-height:1.42;letter-spacing:-.03em}
+.story p{font-size:15px;line-height:1.75;color:#2a2a2a;margin-top:12px}
+.story figure{margin:24px -16px 0}
+.story figure img{height:300px;object-fit:cover}
+.story figcaption{font-size:12px;color:var(--mute);padding:8px 16px 0}
+.gosi{padding:36px 16px 0}
+.gosi h4{font-size:15px;font-weight:700;margin-bottom:10px}
+.gosi table{width:100%;border-collapse:collapse;font-size:13px;border-top:1px solid var(--ink)}
+.gosi th,.gosi td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.gosi th{width:36%;background:#fafafa;font-weight:500;color:var(--t2)}
+.foot{padding:28px 16px calc(var(--bar) + 28px);font-size:12px;color:var(--mute);line-height:1.7}
+
+/* 하단 고정 바 */
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:6}
+.bar .heart,.bar .ghost{flex:none;width:56px;height:56px;border:1px solid #d6d6d6;border-radius:8px;display:grid;place-items:center}
+.bar .ghost{width:auto;padding:0 16px;font-size:14.5px;font-weight:600}
+.cta{flex:1;height:56px;border-radius:8px;background:var(--red);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.25}
+.cta b{font-size:16.5px;font-weight:700}
+.cta small{font-size:11.5px;opacity:.86;margin-top:2px}
+.bar.col{flex-direction:column;gap:6px}
+.barnote{font-size:11px;color:var(--mute);text-align:center}
+
+/* 검사표 문서 */
+.ask{font-size:15.5px;font-weight:600;padding:16px 16px 0;letter-spacing:-.02em}
+.doc{margin:12px 16px 0;border:1px solid var(--ink);background:#fff}
+.doc-h{display:flex;justify-content:space-between;align-items:flex-end;padding:13px 13px 10px;border-bottom:3px double var(--ink)}
+.doc-h h3{font-family:var(--serif);font-weight:700;font-size:19px;letter-spacing:-.03em;line-height:1.2}
+.doc-h p{font-size:10.5px;color:var(--mute);text-align:right;line-height:1.5;font-variant-numeric:tabular-nums}
+.doc-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--t2);padding:7px 13px;border-bottom:1px solid var(--ink)}
+.sheet{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.sheet th{font-size:11px;font-weight:500;color:var(--mute);text-align:left;padding:7px 0 6px;border-bottom:1px solid var(--line)}
+.sheet th:first-child,.sheet td:first-child{padding-left:13px}
+.sheet td{padding:9px 0;border-bottom:1px solid var(--line);vertical-align:middle}
+.sheet tr:last-child td{border-bottom:0}
+.sheet tr[data-pick]{cursor:pointer}
+.sheet tr[aria-pressed="true"] td{background:#f6f6f6}
+.sheet .id{width:40px;font-family:var(--serif);font-weight:700;font-size:20px}
+.sheet .g{width:94px}
+.gauge{width:78px;height:78px;border-radius:50%;border:1px dashed #b5b5b5;display:grid;place-items:center}
+.gauge span{width:var(--d);height:var(--d);border-radius:50%;overflow:hidden}
+.gauge img{height:100%;object-fit:cover;transform:scale(1.3)}
+.sheet .sz{width:52px;font-size:15px;font-weight:700}
+.sheet .bx{font-size:13px;color:var(--mute)}
+.sheet .ck{width:44px}
+.box{width:22px;height:22px;border:1.5px solid #9b9b9b;display:grid;place-items:center}
+.box svg{opacity:0}
+tr[aria-pressed="true"] .box{background:var(--ink);border-color:var(--ink)}
+tr[aria-pressed="true"] .box svg{opacity:1}
+.doc-f{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 13px;border-top:1px solid var(--ink)}
+.doc-f p{font-size:11px;color:var(--mute);line-height:1.5}
+.inspector{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mute);flex:none}
+.inspector i{width:46px;height:46px;border:1px dashed #b5b5b5;display:grid;place-items:center;position:relative}
+.inspector .stamp{position:absolute;inset:3px;font-size:11.5px;line-height:1.05;transform:rotate(-10deg)}
+
+/* 측정 */
+.instr{flex:1;display:grid;place-items:center;min-height:0;position:relative}
+.ring{width:262px;height:262px;border-radius:50%;border:1px dashed #b5b5b5;display:grid;place-items:center;position:relative}
+.ring .fruit{width:228px;height:228px;border-radius:50%;overflow:hidden;transform:scale(.97)}
+.ring .fruit img{height:100%;object-fit:cover;transform:scale(1.3)}
+.ring .pulse{position:absolute;inset:-14px;border-radius:50%;border:2px solid rgba(20,20,20,.18)}
+.ring .size{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:#fff;font-size:11px;color:var(--mute);padding:0 6px}
+.readout{padding:0 20px}
+.readrow{display:flex;justify-content:space-between;align-items:flex-end}
+.readrow b{font-size:54px;font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.readrow b small{font-size:17px;font-weight:600;color:var(--mute);margin-left:4px;letter-spacing:0}
+.readrow .cnt{font-size:13px;color:var(--mute);padding-bottom:6px;font-variant-numeric:tabular-nums}
+.meter{position:relative;margin-top:14px;height:28px}
+.meter .scale{position:absolute;left:0;right:0;top:0;height:9px;border-bottom:1px solid var(--ink);background:repeating-linear-gradient(90deg,#9a9a9a 0 1px,transparent 1px 5%)}
+.meter .lbl{position:absolute;top:13px;font-size:10px;color:var(--mute);transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.meter .pin{position:absolute;top:-7px;left:calc(var(--v,0) / 20 * 100%);width:2px;height:18px;background:var(--ink);transition:left .3s cubic-bezier(.22,1,.36,1)}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:18px 20px 0}
+.stamps i{aspect-ratio:1;border:1px solid #d2d2d2;position:relative;display:grid;place-items:center;font-style:normal}
+.stamps i::before{content:attr(data-n);position:absolute;left:4px;top:2px;font-size:9.5px;color:#9a9a9a}
+.stamps i.next{border:1.5px dashed var(--ink)}
+.stamps i.on::after{content:"톡";width:70%;height:70%;border:2px solid var(--red);border-radius:50%;display:grid;place-items:center;color:var(--red);font-family:var(--serif);font-weight:700;font-size:14px;transform:rotate(-12deg);filter:url(#ink);opacity:.96}
+.tapnote{text-align:center;font-size:15px;font-weight:600;padding:14px 0 0}
+.mnote{text-align:center;font-size:11px;color:var(--mute);padding:6px 0 16px}
+
+/* 결과 */
+.sheet tr.idle td{color:#a5a5a5}
+.sheet tr.idle .gauge{opacity:.45}
+.sheet tr.done .bx{color:var(--ink);font-size:17px;font-weight:800}
+.sheet tr.done .bx small{font-size:12px;font-weight:600;color:var(--mute);margin-left:2px}
+.pending{margin:12px 16px 0;border:1px dashed #b5b5b5;padding:12px 13px;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:baseline}
+.pending span{font-family:var(--serif);font-weight:700;font-size:16px}
+.pending b{font-size:13px;font-weight:700;justify-self:end}
+.pending small{grid-column:1/-1;font-size:12px;color:var(--mute);margin-top:2px}
+
+/* 전환 */
+.s-judging{position:fixed;inset:0;background:#141414;color:#fff;overflow:hidden}
+.j-msg{text-align:center;font-size:13.5px;opacity:.8;padding-top:120px}
+.paper{position:absolute;left:20px;right:20px;top:200px;bottom:-40px;background:#fff;color:var(--ink);padding:22px 20px}
+.paper h3{font-family:var(--serif);font-weight:700;font-size:26px;letter-spacing:-.03em}
+.paper .no{font-size:11px;color:var(--mute);margin-top:2px}
+.paper h3+.no{padding-bottom:10px;border-bottom:3px double var(--ink)}
+.blank div{display:grid;grid-template-columns:84px 1fr;align-items:end;height:44px;font-size:13px;color:var(--mute)}
+.blank dd{border-bottom:1px solid #cfcfcf;height:22px}
+.bigstamp{position:absolute;left:50%;top:330px;width:150px;height:150px;margin-left:-75px;font-size:30px;line-height:1.05;border-width:4px;transform:rotate(-12deg) scale(1.08)}
+.play .paper{animation:rise .7s cubic-bezier(.22,1,.36,1) both}
+.play .bigstamp{animation:slam .22s .78s cubic-bezier(.7,0,.84,0) both}
+.play .j-msg{animation:fade .4s both}
+@keyframes rise{from{transform:translateY(110%)}to{transform:none}}
+@keyframes slam{from{transform:rotate(-12deg) scale(2.3);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:.9}}
+@keyframes fade{from{opacity:0}}
+
+/* 엔딩 */
+.s-ending{background:var(--red);color:#fff;min-height:100vh}
+.s-ending .hd{background:var(--red);color:#fff}
+.s-ending .seal{background:#fff;color:var(--red)}
+.e-head{padding:10px 20px 0}
+.e-no{font-size:12px;opacity:.82;font-variant-numeric:tabular-nums}
+.e-head h1{font-family:var(--serif);font-weight:700;font-size:40px;letter-spacing:-.045em;line-height:1.18;margin-top:6px}
+.e-head p{font-size:14.5px;line-height:1.6;margin-top:10px;opacity:.94}
+.cert{position:relative;margin:20px 16px 0;background:#fff;color:var(--ink);padding:16px 16px 6px}
+.cert-h{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:9px;border-bottom:3px double var(--ink)}
+.cert-h h2{font-family:var(--serif);font-weight:700;font-size:19px;letter-spacing:-.03em}
+.cert-h span{font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.cert dl div{display:grid;grid-template-columns:76px 1fr;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}
+.cert dl div:last-child{border-bottom:0}
+.cert dt{color:var(--mute);font-size:13px}
+.cert dd b{font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:-.03em}
+.cert .stamp{position:absolute;right:16px;top:62px;width:94px;height:94px;font-size:17px;line-height:1.1;border-width:3px;transform:rotate(-13deg)}
+.share{padding:16px 16px 0}
+.share .main{width:100%;height:56px;background:#fff;color:var(--red);border-radius:8px;font-size:16.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
+.share .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.share .two button{height:48px;border:1px solid rgba(255,255,255,.75);border-radius:8px;font-size:14.5px;font-weight:600;color:#fff}
+.disc{font-size:11.5px;line-height:1.6;opacity:.8;padding:14px 20px 22px;text-align:center}
+@media (prefers-reduced-motion:reduce){.play .paper,.play .bigstamp,.play .j-msg{animation:fade .3s both}.meter .pin{transition:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="ink" x="-15%" y="-15%" width="130%" height="130%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="1" seed="9" result="s"/>
+    <feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.5 1.6" result="m"/>
+    <feComposite in="d" in2="m" operator="in"/>
+  </filter>
+  <filter id="ink-soft" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="2" result="s"/>
+    <feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.55" result="m"/>
+    <feComposite in="SourceGraphic" in2="m" operator="in"/>
+  </filter>
+</svg>
+
+<!-- 1. 상품 상세 -->
+<section class="screen s-product">
+  <header class="hd">
+    <a class="wm" href="#product">귤상회<span class="seal" aria-hidden="true">選</span></a>
+    <span class="sp"></span>
+    <a class="ic" href="#product" aria-label="검색"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></a>
+    <a class="ic" href="#product" aria-label="장바구니"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg></a>
+  </header>
+  <div class="gallery">
+    <img src="https://images.unsplash.com/photo-1634381542914-46a782e5192d?auto=format&fit=crop&w=800&h=800&q=80" alt="선별대 위에 놓인 노지감귤. 초록빛이 남은 것과 노랗게 익은 것이 섞여 있다">
+    <div class="tagwrap" role="img" aria-label="선별 태그: 노지 온주밀감, 산지 서귀포, 규격 2S에서 M, 수확 11월 4일, 선별필">
+      <svg class="cord" width="70" height="72" viewBox="0 0 70 72"><path d="M22 72 C 20 46, 34 30, 66 2" stroke="#e9e1d4" stroke-width="1.6" fill="none"/></svg>
+      <div class="tag">
+        <i class="hole"></i>
+        <p class="t-top"><b>귤상회 선과장</b></p>
+        <p class="t-kind">노지 온주밀감</p>
+        <dl class="t-rows">
+          <div><dt>산지</dt><dd>서귀포</dd></div>
+          <div><dt>규격</dt><dd>2S–M</dd></div>
+          <div><dt>수확</dt><dd>11.04</dd></div>
+        </dl>
+        <p class="t-no">No.0412</p>
+        <span class="stamp round">선별<br>필</span>
+      </div>
+    </div>
+    <span class="count">1 / 4</span>
+  </div>
+  <div class="head">
+    <a class="brandlink" href="#product">귤상회 선과장<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></a>
+    <h1 class="title">제주 서귀포 햇귤 10kg</h1>
+    <p class="desc">노지 온주밀감 · 2S~M 크기 선별 혼합</p>
+    <p class="price"><strong>29,900</strong><span class="won">원</span><span class="unit">100g당 299원</span></p>
+  </div>
+  <div class="band"></div>
+  <dl class="info">
+    <div><dt>배송</dt><dd>무료배송<small>수확 후 크기별로 선별해 출고</small></dd></div>
+    <div><dt>원산지</dt><dd>국산 (제주 서귀포)</dd></div>
+    <div><dt>규격</dt><dd>10kg · 2S·S·M 혼합</dd></div>
+    <div><dt>검사</dt><dd>구매 전 당도 검사<small>10초 · 무료 · 모든 주문에 적용</small></dd></div>
+  </dl>
+  <section class="story">
+    <h3>나무에서 한 번, 선과장에서 한 번.<br>두 번 고른 귤만 보냅니다.</h3>
+    <p>껍질을 까는 순간, 달콤한 제주를 만나보세요. 크기는 선과장에서 규격으로 나누고, 맛은 구매 전 당도 검사로 확인합니다. 이번 시즌 첫 수확이라 아직 후기가 없어요.</p>
+    <figure>
+      <img src="https://images.unsplash.com/photo-1763566199190-04a65ea7a107?auto=format&fit=crop&w=800&h=600&q=75" alt="수확 자루에 담긴 노지감귤">
+      <figcaption>수확 자루째 선과장으로 옮겨진 노지감귤</figcaption>
+    </figure>
+  </section>
+  <section class="gosi">
+    <h4>상품정보제공고시</h4>
+    <table>
+      <tr><th>품목 또는 명칭</th><td>노지 온주밀감</td></tr>
+      <tr><th>중량·크기</th><td>10kg · 2S~M 혼합</td></tr>
+      <tr><th>생산자·소재지</th><td>귤상회(가칭) · 제주 서귀포</td></tr>
+      <tr><th>소비자상담</th><td>이 페이지는 판매하지 않습니다</td></tr>
+    </table>
+  </section>
+  <p class="foot">귤상회(가칭) · 이 페이지는 판매·결제가 없는 비상업 유머 체험입니다.<br>비교용 임시 사진: Unsplash (insung yoon, Luis Guaman)</p>
+  <div class="bar">
+    <button class="heart" aria-label="찜하기"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg></button>
+    <a class="cta" href="#select"><b>당도 검사 후 구매</b><small>10초 · 검사 무료</small></a>
+  </div>
+</section>
+
+<!-- 2. 귤 선택 (당도 검사표) -->
+<section class="screen s-select">
+  <header class="hd2">
+    <a class="ic" href="#product" aria-label="상품으로"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <h2>구매 전 당도 검사</h2><span></span>
+  </header>
+  <p class="ask">검사할 귤을 하나 고르세요.</p>
+  <div class="doc">
+    <div class="doc-h"><h3>당도 검사표</h3><p>No.0412<br>2026.11.05</p></div>
+    <div class="doc-meta"><span>귤상회 선과장</span><span>노지 온주밀감 · 10kg</span></div>
+    <table class="sheet">
+      <thead><tr><th>시료</th><th></th><th>규격</th><th>당도*</th><th>선택</th></tr></thead>
+      <tbody>
+        <tr data-pick="A" role="button" tabindex="0"><td class="id">A</td><td class="g"><div class="gauge" style="--d:50px"><span><img src="https://images.unsplash.com/photo-1634381542914-46a782e5192d?rect=813,1135,645,645&w=200&q=80&auto=format" alt="초록빛이 남은 A 귤"></span></div></td><td class="sz">2S</td><td class="bx">—</td><td class="ck"><i class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i></td></tr>
+        <tr data-pick="B" role="button" tabindex="0"><td class="id">B</td><td class="g"><div class="gauge" style="--d:61px"><span><img src="https://images.unsplash.com/photo-1634381542914-46a782e5192d?rect=1337,1062,645,645&w=200&q=80&auto=format" alt="반쯤 익은 B 귤"></span></div></td><td class="sz">S</td><td class="bx">—</td><td class="ck"><i class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i></td></tr>
+        <tr data-pick="C" role="button" tabindex="0"><td class="id">C</td><td class="g"><div class="gauge" style="--d:72px"><span><img src="https://images.unsplash.com/photo-1634381542914-46a782e5192d?rect=2271,1680,645,645&w=200&q=80&auto=format" alt="노랗게 익은 C 귤"></span></div></td><td class="sz">M</td><td class="bx">—</td><td class="ck"><i class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i></td></tr>
+      </tbody>
+    </table>
+    <div class="doc-f"><p>* 당도는 체험용 연출 수치입니다.<br>규격(2S·S·M)은 크기 등급입니다.</p><span class="inspector">검사원<i></i></span></div>
+  </div>
+  <div class="bar col">
+    <a class="cta" href="#measure" style="flex:none"><b><span data-picked>C</span> 시료 검사 시작</b></a>
+    <p class="barnote">연출된 체험 · 실제 판매·결제 없음</p>
+  </div>
+</section>
+
+<!-- 3. 당도 측정 -->
+<section class="screen s-measure">
+  <header class="hd2">
+    <a class="ic" href="#select" aria-label="다시 고르기"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <h2>당도 검사 · <span data-picked>C</span> 시료</h2><span></span>
+  </header>
+  <div class="instr">
+    <button class="ring" data-tap aria-label="귤을 눌러 검사">
+      <span class="size">규격 <span data-size>M</span></span>
+      <span class="pulse"></span>
+      <span class="fruit"><img data-photo src="https://images.unsplash.com/photo-1634381542914-46a782e5192d?rect=2271,1680,645,645&w=520&q=82&auto=format" alt="검사 중인 귤"></span>
+    </button>
+  </div>
+  <div class="readout">
+    <div class="readrow"><b><span data-brix>9.5</span><small>°Bx</small></b><span class="cnt"><span data-count>3</span> / 5회</span></div>
+    <div class="meter" data-meter style="--v:9.5">
+      <div class="scale"></div><i class="pin"></i>
+      <span class="lbl" style="left:0">0</span><span class="lbl" style="left:25%">5</span><span class="lbl" style="left:50%">10</span><span class="lbl" style="left:75%">15</span><span class="lbl" style="left:100%">20</span>
+    </div>
+  </div>
+  <div class="stamps"><i data-seg data-n="1"></i><i data-seg data-n="2"></i><i data-seg data-n="3"></i><i data-seg data-n="4"></i><i data-seg data-n="5"></i></div>
+  <p class="tapnote">귤을 누르세요</p>
+  <p class="mnote">측정값은 연출된 수치입니다</p>
+</section>
+
+<!-- 4. 당도 결과 -->
+<section class="screen s-result">
+  <header class="hd2">
+    <span></span><h2>검사 결과</h2><span></span>
+  </header>
+  <div class="doc" style="margin-top:14px">
+    <div class="doc-h"><h3>당도 검사표</h3><p>No.0412<br>검사 완료</p></div>
+    <div class="doc-meta"><span>귤상회 선과장</span><span>노지 온주밀감 · 10kg</span></div>
+    <table class="sheet">
+      <thead><tr><th>시료</th><th></th><th>규격</th><th>당도*</th></tr></thead>
+      <tbody>
+        <tr data-row="A" class="idle"><td class="id">A</td><td class="g"><div class="gauge" style="--d:50px"><span><img src="https://images.unsplash.com/photo-1634381542914-46a782e5192d?rect=813,1135,645,645&w=200&q=80&auto=format" alt=""></span></div></td><td class="sz">2S</td><td class="bx">미검사</td></tr>
+        <tr data-row="B" class="idle"><td class="id">B</td><td class="g"><div class="gauge" style="--d:61px"><span><img src="https://images.unsplash.com/photo-1634381542914-46a782e5192d?rect=1337,1062,645,645&w=200&q=80&auto=format" alt=""></span></div></td><td class="sz">S</td><td class="bx">미검사</td></tr>
+        <tr data-row="C" class="idle"><td class="id">C</td><td class="g"><div class="gauge" style="--d:72px"><span><img src="https://images.unsplash.com/photo-1634381542914-46a782e5192d?rect=2271,1680,645,645&w=200&q=80&auto=format" alt=""></span></div></td><td class="sz">M</td><td class="bx">미검사</td></tr>
+      </tbody>
+    </table>
+    <div class="doc-f"><p>* 당도는 체험용 연출 수치입니다.<br>규격(2S·S·M)은 크기 등급입니다.</p><span class="inspector">검사원<i><span class="stamp">검사<br>필</span></i></span></div>
+  </div>
+  <div class="pending"><span>판정서</span><b>발급 대기</b><small>최종 판정을 받으면 검사가 끝납니다</small></div>
+  <div class="bar">
+    <a class="ghost" href="#select" data-retry>다시 검사</a>
+    <button class="cta" data-judge><b>최종 판정 받기</b></button>
+  </div>
+</section>
+
+<!-- 5. 판정 전환 -->
+<section class="screen s-judging" aria-live="polite">
+  <p class="j-msg">판정서를 발급하고 있습니다</p>
+  <div class="paper">
+    <h3>판정서</h3><p class="no">No.0412 · 귤상회 선과장</p>
+    <dl class="blank"><div><dt>시료</dt><dd></dd></div><div><dt>측정 당도</dt><dd></dd></div><div><dt>판정</dt><dd></dd></div><div><dt>배송 예정</dt><dd></dd></div><div><dt>결제 금액</dt><dd></dd></div></dl>
+  </div>
+  <span class="stamp round bigstamp">판정</span>
+</section>
+
+<!-- 6. 낚시 엔딩 + 공유 -->
+<section class="screen s-ending">
+  <header class="hd">
+    <span class="wm">귤상회<span class="seal" aria-hidden="true">選</span></span>
+    <span class="sp"></span>
+  </header>
+  <div class="e-head">
+    <p class="e-no">판정서 No.0412 · 2026.11.05</p>
+    <h1>귤은 없습니다.</h1>
+    <p>고객님이 검사하신 건 귤의 당도가 아니라,<br>낚일 준비가 얼마나 되어 있는지였습니다.</p>
+  </div>
+  <div class="cert">
+    <div class="cert-h"><h2>판정서</h2><span>귤상회 선과장</span></div>
+    <dl>
+      <div><dt>시료</dt><dd><span data-picked>C</span> · 규격 <span data-size>M</span></dd></div>
+      <div><dt>측정 당도</dt><dd><span data-final>15.8</span> °Bx <span style="color:var(--mute);font-size:12.5px">(순수함)</span></dd></div>
+      <div><dt>판정</dt><dd><b data-grade>로얄 낚임과</b></dd></div>
+      <div><dt>배송 예정</dt><dd>귤 0kg</dd></div>
+      <div><dt>결제 금액</dt><dd>0원</dd></div>
+    </dl>
+    <span class="stamp round">낚임<br>확인</span>
+  </div>
+  <div class="share">
+    <button class="main" data-share><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"/><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"/></svg>친구도 검사받게 하기</button>
+    <div class="two"><button data-copy>링크 복사</button><button data-retry>다시 검사하기</button></div>
+  </div>
+  <p class="disc">귤상회(가칭)는 가상의 상점입니다.<br>판매·결제·배송은 일어나지 않았습니다.</p>
+</section>
+
+<script>
+// 시안 확인용 최소 스크립트: 해시 라우팅, 귤 선택, 5회 탭, 판정 연출, 공유 대체 수단.
+// ponytail: 디자인 검토용. 실제 구현은 Phase 4에서 새로 작성한다.
+(() => {
+  const R = document.documentElement;
+  const IMG = 'https://images.unsplash.com/photo-1634381542914-46a782e5192d?w=520&q=82&auto=format&rect=';
+  const F = { // 규격(size)과 연출 당도(bx)는 서로 무관
+    A: { bx: 12.4, size: '2S', grade: '새콤 낚임과', rect: '813,1135,645,645' },
+    B: { bx: 14.2, size: 'S',  grade: '달콤 낚임과', rect: '1337,1062,645,645' },
+    C: { bx: 15.8, size: 'M',  grade: '로얄 낚임과', rect: '2271,1680,645,645' },
+  };
+  let pick = 'C', taps = 3; // 스크린샷 기본 상태
+  const all = (s, fn) => document.querySelectorAll(s).forEach(fn);
+  const paint = () => {
+    R.dataset.screen = location.hash.slice(1) || 'product';
+    const f = F[pick], cur = (f.bx * taps / 5).toFixed(1);
+    all('[data-pick]', el => el.setAttribute('aria-pressed', String(el.dataset.pick === pick)));
+    all('[data-picked]', el => (el.textContent = pick));
+    all('[data-size]', el => (el.textContent = f.size));
+    all('[data-count]', el => (el.textContent = taps));
+    all('[data-brix]', el => (el.textContent = cur));
+    all('[data-final]', el => (el.textContent = f.bx.toFixed(1)));
+    all('[data-grade]', el => (el.textContent = f.grade));
+    all('[data-photo]', el => (el.src = IMG + f.rect));
+    all('[data-meter]', el => el.style.setProperty('--v', cur));
+    all('[data-seg]', (el, i) => { el.classList.toggle('on', i < taps); el.classList.toggle('next', i === taps); });
+    all('[data-row]', el => {
+      const on = el.dataset.row === pick;
+      el.className = on ? 'done' : 'idle';
+      el.querySelector('.bx').innerHTML = on ? `${f.bx.toFixed(1)}<small>°Bx</small>` : '미검사';
+    });
+  };
+  const url = () => location.href.split('#')[0];
+  addEventListener('hashchange', paint);
+  document.addEventListener('click', async e => {
+    const t = e.target.closest('[data-pick],[data-tap],[data-judge],[data-retry],[data-share],[data-copy]');
+    if (!t) return;
+    if (t.dataset.pick) { pick = t.dataset.pick; taps = 0; }
+    if ('tap' in t.dataset && taps < 5) { taps++; if (taps === 5) setTimeout(() => (location.hash = 'result'), 450); }
+    if ('judge' in t.dataset) {
+      location.hash = 'judging';
+      document.querySelector('.s-judging').classList.add('play');
+      setTimeout(() => (location.hash = 'ending'), 1700);
+    }
+    if ('retry' in t.dataset) { e.preventDefault(); taps = 0; location.hash = 'select'; }
+    if ('share' in t.dataset) {
+      if (navigator.share) { try { await navigator.share({ title: '귤상회', text: '구매 전 당도 검사 받아보세요', url: url() }); } catch {} }
+      else t.nextElementSibling?.querySelector('[data-copy]')?.click();
+    }
+    if ('copy' in t.dataset) {
+      try { await navigator.clipboard.writeText(url()); t.textContent = '복사했어요'; }
+      catch { t.textContent = url(); } // ponytail: 복사 실패 시 링크를 그대로 노출. 인앱 브라우저 대체 수단은 Phase 4 실기기 검증
+    }
+    paint();
+  });
+  paint();
+})();
+</script>
+</body>
+</html>
