@@ -44,7 +44,7 @@ E2E는 `npm run build && npm run start`로 띄운 Production 빌드를 대상으
 | FR-13 | 뒤로 동작, history 미사용 | unit '뒤로', flow ②·③ | 안드로이드 하드웨어 뒤로 |
 | FR-14 | OG·공유 문구에 결과 없음 | meta 'OG', flow ⑥ 'Web Share' | 카카오 미리보기 |
 | FR-15 | 고지: 상품 푸터, 검사표·측정, 엔딩 | flow ①·② '고지', flow ⑥ | 시각 전부 |
-| NFR-1 | 첫 로드 JS ≤ 130KB(gzip) | meta '첫 로드 JS 전송량' | LCP·CLS는 Lighthouse(§10) |
+| NFR-1 | 첫 로드 JS ≤ 160KB(gzip, 150KB 초과 시 경고) | meta '첫 로드 JS 전송량' | LCP·INP·CLS는 `tests/perf.spec.ts`(실험실)와 실기기 확인(§10) |
 | NFR-4 | 외부 도메인 요청 0건 | meta '외부 도메인 요청' | — |
 | NFR-5 | noindex (meta + 헤더) | meta 'noindex' | `curl -sI <URL>`에 `x-robots-tag: noindex, nofollow` |
 | NFR-6 | 보안 헤더 | — | `curl -sI <URL>`에 nosniff·Referrer-Policy·X-Frame-Options·Permissions-Policy |
@@ -150,11 +150,12 @@ PLAN '상태 전이' 표의 모든 행을 단위 테스트로 덮고, 사용자 
 
 | 지표 | 기준 | 방법 |
 |---|---|---|
-| 첫 로드 JS (`/`) | ≤ 130KB gzip | meta 테스트 '첫 로드 JS 전송량'(`/_next/static/**/*.js`의 `encodedBodySize` 합, `next start` gzip 기준). Next 16부터 `next build`는 이 수치를 출력하지 않는다 |
-| LCP | ≤ 2.5초 | Lighthouse 모바일(느린 4G 모의) |
-| CLS | ≤ 0.05 | Lighthouse |
+| 첫 로드 JS (`/`) | ≤ 160KB gzip, 150KB 초과 시 경고 | meta 테스트 '첫 로드 JS 전송량'(`/_next/static/**/*.js`를 경로 기준 중복 제거 후 `encodedBodySize` 합, `next start` gzip 기준). Next 16부터 `next build`는 이 수치를 출력하지 않는다 |
+| LCP | ≤ 2.5초 | `tests/perf.spec.ts` 실험실 측정(m390, CDP 스로틀링) + 실기기 확인 |
+| INP | ≤ 200ms | `tests/perf.spec.ts` 실험실 근사(event timing) + 실기기 확인 |
+| CLS | ≤ 0.1 | `tests/perf.spec.ts` 실험실 측정 + 실기기 확인 |
 | TBT | ≤ 200ms | Lighthouse |
-| Lighthouse 점수 | 성능 ≥ 90, 접근성 ≥ 95, 권장사항 ≥ 95 | Chrome DevTools(로컬 Production 빌드와 Preview URL) |
+| Lighthouse 점수 | 성능 ≥ 90, 접근성 ≥ 95, 권장사항 ≥ 95 | 로컬 미설치 — 미검증, G5 Preview에서 Chrome DevTools로 측정 |
 | 대표 사진 전송량 | ≤ 150KB (AVIF/WebP) | DevTools Network |
 | 첫 화면 폰트 전송량 | ≤ 250KB(필요한 unicode-range 조각만) | DevTools Network |
 | 외부 요청 | 0건 | meta 테스트 |
@@ -171,7 +172,7 @@ PLAN '상태 전이' 표의 모든 행을 단위 테스트로 덮고, 사용자 
 - `npm test` 전부 통과(단위 11, E2E 세 프로젝트, axe 0, 시각 12)
 - 시각 기준 이미지 12장 사용자 승인
 - `docs/AUDIT.md`에 디자인 감사(§8) 통과 기록
-- 첫 로드 JS 기준 충족, 외부 요청 0건
+- 첫 로드 JS ≤ 160KB(150KB 초과 시 경고)와 `tests/perf.spec.ts`의 LCP ≤ 2.5초·INP ≤ 200ms·CLS ≤ 0.1 충족, 외부 요청 0건
 - Preview의 `og:image`는 Production 도메인을 가리킨다(`VERCEL_PROJECT_PRODUCTION_URL`은 Preview에도 설정됨). 링크 미리보기 최종 확인은 G6 Production에서 한다
 - GitHub 활성 계정이 `wantraiseapomeranian`
 

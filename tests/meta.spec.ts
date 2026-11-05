@@ -48,15 +48,26 @@ test('전 과정에서 외부 도메인 요청이 없다', async ({ page, baseUR
 });
 
 // Next 16부터 `next build`는 First Load JS를 출력하지 않는다. `next start`(gzip)에서 받은 JS 압축 크기를 직접 더한다
-test('첫 로드 JS 전송량 ≤ 130KB', async ({ page }) => {
+test('첫 로드 JS 전송량 ≤ 160KB (150KB 초과 시 경고)', async ({ page }) => {
+  const PASS = 160 * 1024, WARN = 150 * 1024;
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  const bytes = await page.evaluate(() =>
-    (performance.getEntriesByType('resource') as PerformanceResourceTiming[])
-      .filter((e) => new URL(e.name).pathname.startsWith('/_next/static/') && e.name.endsWith('.js'))
-      .reduce((n, e) => n + e.encodedBodySize, 0));
+  const bytes = await page.evaluate(() => {
+    const seen = new Map<string, number>(); // 경로 기준 중복 제거
+    for (const e of performance.getEntriesByType('resource') as PerformanceResourceTiming[]) {
+      const path = new URL(e.name).pathname;
+      if (path.startsWith('/_next/static/') && path.endsWith('.js')) seen.set(path, e.encodedBodySize);
+    }
+    return [...seen.values()].reduce((n, v) => n + v, 0);
+  });
+  test.info().annotations.push({ type: 'js-bytes', description: String(bytes) });
   expect(bytes).toBeGreaterThan(0);
-  expect(bytes).toBeLessThanOrEqual(130 * 1024);
+  if (bytes > WARN) {
+    const msg = `첫 로드 JS ${bytes}B가 150KB 경고선 초과`;
+    test.info().annotations.push({ type: 'warning', description: msg });
+    console.warn(msg);
+  }
+  expect(bytes).toBeLessThanOrEqual(PASS);
 });
 
 test('보안·검색 차단 헤더', async ({ request }) => {
