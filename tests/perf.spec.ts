@@ -44,6 +44,7 @@ test('모바일 LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 (실험실)', async ({ 
   testInfo.annotations.push({ type: 'perf', description: summary });
   console.log(`PERF ${summary} | LCP element: ${lcpEl}`);
   expect(lcp, 'LCP').toBeGreaterThan(0);
+  expect(inp, 'INP 측정값(이벤트 타이밍 기록 없음이면 0)').toBeGreaterThan(0);
   expect(lcp, 'LCP ms').toBeLessThanOrEqual(2500);
   expect(cls, 'CLS').toBeLessThanOrEqual(0.1);
   expect(inp, 'INP ms').toBeLessThanOrEqual(200);
