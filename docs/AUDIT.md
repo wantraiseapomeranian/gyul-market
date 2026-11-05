@@ -10,6 +10,7 @@
 | C3 | ⑥ 엔딩 | 링크 복사 성공이 화면 낭독기에 전달되지 않음 | 버튼 글자만 바뀌고 live region 없음 | 버튼 줄 뒤에 `<p className="sr-only" role="status">` 추가 | 화면 변화 없음 | 해결 |
 | B1 | ① 첫 로드 | 첫 로드 JS 146,283B(gzip) > NFR-1 130KB(133,120B) | 프레임워크 하한 약 124KB(react-dom 71.5 + next 48.2 + turbopack 3.9) + 앱 약 22KB. 39KB core-js 폴리필은 nomodule이라 최신 브라우저는 받지 않음 | 테스트 유지(실패). 기준 조정 여부는 사용자 결정 | — | 차단(G5) |
 | W1 | 전체 | WebKit 프로젝트 실행 불가 (호스트 DLL icuuc77) | 환경 | 로컬은 chromium m390/m360만, 실기기 iOS로 대체 검증 예정 | — | 차단 아님(보류) |
+| T10-F1 | ③ 측정 (기준 이미지) | `3-measure` 기준 이미지가 도장 애니메이션 도중에 찍혀 도장 3개 중 하나가 없거나 흐림 | CSS 애니메이션은 `page.clock`과 무관하게 실제 시간으로 돈다. 캡처 직전 `document.getAnimations()`가 `stamp-in` 3개 모두 running(currentTime 0~83ms of 140ms)이었고, `animations: 'disabled'`가 이를 끝내지 못했다. 500ms 뒤에는 전부 finished | `tests/visual.spec.ts`에 `shot()` 도우미: 캡처 전 모든 애니메이션을 `finish()`하고, 측정은 `data-state="on"` 3개를 먼저 확인. 앱 변경 없음. 12장 중 다른 화면은 정착 캡처와 픽셀 동일(수정 필요 없음), 측정 2장만 재생성. 3회 연속 통과 | [390 전](audit/t10-fix-measure-390-before.png) · [390 후](audit/t10-fix-measure-390-after.png) · [360 전](audit/t10-fix-measure-360-before.png) · [360 후](audit/t10-fix-measure-360-after.png) | 해결 |
 
 ## 디자인 감사 (Task 11)
 
@@ -140,7 +141,7 @@
 
 ### 사용자 판단 필요
 
-- **U1. ③ 측정 기준 이미지가 실제로 자리 잡은 화면과 다르다**
+- **U1. ③ 측정 기준 이미지가 실제로 자리 잡은 화면과 다르다** (해결: T10-F1)
   - 증상: '3 / 5회'인데 기준 이미지 `m390/3-measure.png`에는 도장이 2개뿐이고 세 번째 칸이 비어 보인다. `m360/3-measure.png`는 두 번째 도장도 흐리다.
   - 원인: 세 번째 탭 직후 도장 찍힘 애니메이션(140ms, in-stamp) 도중에 캡처된 것이다. 설정에 `animations: 'disabled'`가 있는데도 그렇다. 원인은 확인하지 못했다.
   - 실제 화면: 같은 상태를 1.2초 기다리면 도장 3개가 불투명도 0.96으로 보이고, v2 시안과 같다. UI 결함이 아니라 기준 이미지의 캡처 시점 문제다.
