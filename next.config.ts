@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
     },
   },
   images: { formats: ['image/avif', 'image/webp'] },
+  // 렌더 차단 CSS 요청을 없애 첫 프레임을 앞당긴다(PERF-1). 대가: HTML gzip 6KB→116KB(CSS가 <style>과 RSC 페이로드에 중복). 되돌리려면 이 줄만 지운다
+  experimental: { inlineCss: true },
   async headers() {
     return [
       {
