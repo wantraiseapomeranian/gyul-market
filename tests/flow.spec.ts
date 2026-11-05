@@ -129,6 +129,7 @@ test.describe('④ 결과 · ⑤ 판정 전환', () => {
     await page.getByRole('button', { name: 'C 시료 검사 시작' }).click();
     await tapFruit(page, 5);
     await page.clock.runFor(500);
+    await expect(page.getByRole('heading', { name: '검사 결과' })).toBeVisible();
     await expect(page.getByText('12.4')).toBeVisible();
   });
 
@@ -208,6 +209,7 @@ test.describe('⑥ 엔딩 · 공유', () => {
     await page.getByRole('button', { name: 'C 시료 검사 시작' }).click();
     await tapFruit(page, 5);
     await page.clock.runFor(500);
+    await expect(page.getByRole('heading', { name: '검사 결과' })).toBeVisible();
     await expect(page.getByText('12.4')).toBeVisible();
   });
 });
