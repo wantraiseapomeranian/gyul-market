@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { open, toSelect, pickRow } from './helpers';
+import { open, toSelect, pickRow, toMeasure, tapFruit } from './helpers';
 
 test.describe('① 상품 상세', () => {
   test.beforeEach(async ({ page }) => { await open(page); });
@@ -50,5 +50,40 @@ test.describe('② 귤 선택', () => {
     await expect(page.getByRole('heading', { level: 1, name: '제주 서귀포 햇귤 10kg' })).toBeVisible();
     await toSelect(page);
     await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
+  });
+});
+
+test.describe('③ 당도 측정', () => {
+  test.beforeEach(async ({ page }) => { await open(page); await toMeasure(page, 'C'); });
+
+  test('탭마다 횟수·측정값·도장이 오르고 5회 뒤 결과로 간다', async ({ page }) => {
+    await expect(page.getByText('0 / 5회')).toBeVisible();
+    await tapFruit(page, 3);
+    await expect(page.getByText('3 / 5회')).toBeVisible();
+    await expect(page.getByText('9.5', { exact: true })).toBeVisible();   // C=15.8 × 3/5
+    await expect(page.locator('.stamp-cells li[data-state="on"]')).toHaveCount(3);
+    await tapFruit(page, 2);
+    const fruit = page.getByRole('button', { name: /귤 누르기/ });
+    await expect(fruit).toHaveAttribute('aria-disabled', 'true');
+    // aria-disabled 요소는 Playwright가 비활성으로 보고 click()이 시간 초과까지 기다린다. 6번째는 force로 눌러 무시되는지 본다
+    await fruit.click({ force: true });
+    await expect(page.getByText('5 / 5회')).toBeVisible();
+    await expect(page.getByText('측정 완료')).toBeVisible();
+    await page.clock.runFor(500);
+    await expect(page.getByRole('heading', { name: '검사 결과' })).toBeVisible();
+  });
+
+  test('뒤로 가면 선택으로 가고 탭 수가 초기화된다', async ({ page }) => {
+    await tapFruit(page, 2);
+    await page.getByRole('button', { name: '귤 다시 고르기' }).click();
+    await expect(page.getByRole('radio', { name: /시료 C/ })).toBeChecked();
+    await page.getByRole('button', { name: 'C 시료 검사 시작' }).click();
+    await expect(page.getByText('0 / 5회')).toBeVisible();
+  });
+
+  test('키보드 Space로도 측정한다', async ({ page }) => {
+    await page.getByRole('button', { name: /귤 누르기/ }).focus();
+    await page.keyboard.press('Space');
+    await expect(page.getByText('1 / 5회')).toBeVisible();
   });
 });

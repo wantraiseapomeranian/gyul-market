@@ -3,6 +3,7 @@ import { useEffect, useReducer, useRef, useState, type ReactNode } from 'react';
 import { reduce, initialState, assignBrix, formatDocDate, TAPS_REQUIRED } from '@/lib/game';
 import { BottomBar } from './BottomBar';
 import { SelectScreen } from './screens/SelectScreen';
+import { MeasureScreen } from './screens/MeasureScreen';
 
 export function Game({ product }: { product: ReactNode }) {
   const [s, dispatch] = useReducer(reduce, initialState);
@@ -49,6 +50,8 @@ export function Game({ product }: { product: ReactNode }) {
       );
     case 'select':
       return <SelectScreen {...props} />;
+    case 'measure':
+      return <MeasureScreen {...props} />;
     default:
       return null; // Task 6~8에서 measure·result·judging·ending을 채운다
   }
