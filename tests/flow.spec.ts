@@ -4,6 +4,10 @@ import { open, toSelect, pickRow, toMeasure, tapFruit, toResult, toJudging, toEn
 test.describe('① 상품 상세', () => {
   test.beforeEach(async ({ page }) => { await open(page); });
 
+  test('첫 진입에서는 초점을 옮기지 않는다', async ({ page }) => {
+    await expect(page.getByRole('heading', { level: 1, name: '제주 서귀포 햇귤 10kg' })).not.toBeFocused();
+  });
+
   test('핵심 정보와 CTA가 첫 화면에 보인다', async ({ page }) => {
     await expect(page.getByRole('heading', { level: 1, name: '제주 서귀포 햇귤 10kg' })).toBeInViewport();
     await expect(page.getByText('29,900', { exact: true })).toBeInViewport();
