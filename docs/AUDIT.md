@@ -11,6 +11,8 @@
 | B1 | ① 첫 로드 | 첫 로드 JS 146,283B(gzip) > NFR-1 130KB(133,120B) | 프레임워크 하한 약 124KB(react-dom 71.5 + next 48.2 + turbopack 3.9) + 앱 약 22KB. 39KB core-js 폴리필은 nomodule이라 최신 브라우저는 받지 않음 | 테스트 유지(실패). 기준 조정 여부는 사용자 결정 | — | 차단(G5) |
 | W1 | 전체 | WebKit 프로젝트 실행 불가 (호스트 DLL icuuc77) | 환경 | 로컬은 chromium m390/m360만, 실기기 iOS로 대체 검증 예정 | — | 차단 아님(보류) |
 | T10-F1 | ③ 측정 (기준 이미지) | `3-measure` 기준 이미지가 도장 애니메이션 도중에 찍혀 도장 3개 중 하나가 없거나 흐림 | CSS 애니메이션은 `page.clock`과 무관하게 실제 시간으로 돈다. 세 번째 탭 직후 `document.getAnimations()`에서 `stamp-in` 3개가 running(진행 0~83ms/140ms, 불투명도 0.96 / 0.13 / 0.002)이었다. `animations: 'disabled'`는 이를 끝내지 못했고, 허용 오차(0.01)가 도장 1개 차이를 가려 재생성 없이 통과했다 | `tests/visual.spec.ts`의 `shot()`이 `expect.poll`로 Node 쪽에서 실행 중인 애니메이션이 0이 될 때까지 실제 시간으로 기다린 뒤 캡처. 측정은 도장 3개가 `data-state="on"`이고 셋째 도장 `opacity`가 0.96인지 먼저 확인. 앱 변경 없음. 허용 오차 변경 없음. 12장 전부 1.5초 뒤 독립 캡처와 픽셀 차이 0 | [390 전](audit/t10-fix-measure-390-before.png) · [390 후](audit/t10-fix-measure-390-after.png) · [360 전](audit/t10-fix-measure-360-before.png) · [360 후](audit/t10-fix-measure-360-after.png) | 해결 |
+| G4W-1 | ⑥ 엔딩 | 복사 실패 시 링크 입력칸이 옅은 분홍으로 보임 | 사용자 결정 2026-11-05 (U2). `.share-manual` 라벨의 opacity .94가 입력칸에도 걸려 레드가 비침 | 라벨 opacity 제거(글자만 `rgb(255 255 255 / .94)`), 입력칸 `background: var(--color-paper)`, `border: 1px solid #cfcfcf`, 모서리 없음. DESIGN §4 ShareBlock 갱신 | [390 전](audit/g4w-link-field-390-before.png) · [390 후](audit/g4w-link-field-390-after.png) · [360 전](audit/g4w-link-field-360-before.png) · [360 후](audit/g4w-link-field-360-after.png) | 해결 |
+| G4W-2 | 전체 | 초점 링이 검정(`ink`)이라 브랜드 색과 따로 놂 | 사용자 결정 2026-11-05 | 전역 `:focus-visible`과 선택 행 `label.sheet-row:has(input:focus-visible)` 외곽선을 `camellia`로. 엔딩은 흰색 유지. DESIGN §10 갱신. 시각 기준 이미지 12장 변경 없음(재생성 없이 12/12 통과) | [상품 전](audit/g4w-focus-product-390-before.png) · [상품 후](audit/g4w-focus-product-390-after.png) · [선택 전](audit/g4w-focus-select-390-before.png) · [선택 후](audit/g4w-focus-select-390-after.png) | 해결 |
 
 ## 디자인 감사 (Task 11)
 
@@ -150,7 +152,7 @@
 - **U2. 복사 실패 입력칸 바탕이 옅은 분홍이다**
   - 원인: `.share-manual` 라벨 전체에 opacity .94가 걸려 입력칸에도 레드가 비친다.
   - 글자 대비는 충분하다. 불투명도 규칙(레드 위 흰 글자 0.88 이상)을 어긴 것도 아니라서 표 값 위반으로 보지 않았다.
-  - 결정할 것: 순백으로 바꿀지
+  - 결정할 것: 순백으로 바꿀지 → 해결: G4W-1 (사용자 결정 2026-11-05)
   - 근거: [360 후](audit/t11-1-ending-360-after.png)
 - **U3. 수확 사진(`story.jpg`)의 파란 천 자루 + 주황 귤**
   - 쟁점: §9.1 "주황+하늘색 조합(기존 브랜드 연상)"에 가까운가

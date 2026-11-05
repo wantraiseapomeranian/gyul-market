@@ -30,7 +30,7 @@
   h1, h2, h3 { text-wrap: balance; }
   button { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
   img { -webkit-touch-callout: none; user-select: none; }
-  :focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+  :focus-visible { outline: 2px solid var(--color-camellia); outline-offset: 2px; }
 }
 
 @layer components {
@@ -109,7 +109,7 @@
   .sheet-th { padding-top: 7px; padding-bottom: 6px; font-size: 11px; font-weight: 500; color: var(--color-mute); }
   label.sheet-row { cursor: pointer; }
   label.sheet-row:has(input:checked) { background: #f6f6f6; }
-  label.sheet-row:has(input:focus-visible) { outline: 2px solid var(--color-ink); outline-offset: -2px; }
+  label.sheet-row:has(input:focus-visible) { outline: 2px solid var(--color-camellia); outline-offset: -2px; }
   .sheet-id { font-family: var(--font-serif); font-weight: 700; font-size: 20px; }
   .sheet-size { font-size: 15px; font-weight: 700; }
   .sheet-brix { font-size: 13px; color: var(--color-mute); }
@@ -192,8 +192,8 @@
   .share-main { width: 100%; height: 56px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 8px; background: #fff; color: var(--color-camellia); font-size: 16.5px; font-weight: 700; }
   .share-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
   .share-two button { height: 48px; border: 1px solid rgb(255 255 255 / .75); border-radius: 8px; color: #fff; font-size: 14.5px; font-weight: 600; }
-  .share-manual { margin-top: 10px; font-size: 12px; opacity: .94; }
-  .share-manual input { width: 100%; height: 44px; margin-top: 6px; padding: 0 12px; background: #fff; color: var(--color-ink); font-size: 14px; }
+  .share-manual { margin-top: 10px; font-size: 12px; color: rgb(255 255 255 / .94); }
+  .share-manual input { width: 100%; height: 44px; margin-top: 6px; padding: 0 12px; background: var(--color-paper); border: 1px solid #cfcfcf; border-radius: 0; color: var(--color-ink); font-size: 14px; }
   .disc { padding: 14px 20px calc(22px + env(safe-area-inset-bottom)); text-align: center; font-size: 11.5px; line-height: 1.6; opacity: .88; }
 }
 
