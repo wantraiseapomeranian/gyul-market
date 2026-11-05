@@ -23,7 +23,7 @@
 - 색·서체·크기·시간 값은 DESIGN.md 표의 값만 쓴다(DESIGN §2, DESIGN §6). 토큰 이름은 `ink, ink-2, mute, control, dash, line, band, paper, camellia, slate`
 - 모든 화면 작업은 390×844와 360×780 스크린샷을 남기고 DESIGN.md §9 감사 기준으로 확인해야 완료다
 - 커밋 메시지 끝에 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`
-- 원격 push·저장소 생성·Vercel 연결·공개는 승인 게이트(G5, G6) 이후에만 한다
+- 저장소 생성·원격 push는 G5-A, Vercel 연결·Preview는 G5-B, 사이트 공개는 G6 승인 이후에만 한다
 
 ---
 
@@ -32,8 +32,9 @@
 | 게이트 | 승인 범위 | 확인 방법 |
 |---|---|---|
 | **G4** 구현 착수 | 시안을 `docs/design/`으로 복사, `create-next-app`, 위 의존성 설치, Playwright 브라우저 내려받기, Unsplash 사진 5장 내려받기, 로컬 `git init`과 작업별 커밋 | 사용자가 채팅으로 승인 |
-| **G5** 원격·Preview | 개인 GitHub private 저장소 생성과 push, Vercel(개인 계정) 연결, Preview 배포 | `gh auth status` 활성 계정 = `wantraiseapomeranian` 확인 후 진행 |
-| **G6** 공개 | Production 검증 완료, 사진 결정 완료, 카카오 프로필에 링크 게시 | TEST_PLAN §11 공개 기준 충족, 사용자 승인 |
+| **G5-A** Public 저장소 | 공개 전 Git 이력 전체·추적 파일 보안 검사, 개인 GitHub **public** 저장소 `gyul-market` 생성과 `main` push. 커밋 이메일은 GitHub noreply. Vercel 제외. 저장소 공개는 사이트 공개가 아니다 | `gh auth status` 활성 계정 = `wantraiseapomeranian`, 보안 검사 0건, 사용자 승인 |
+| **G5-B** Preview | Vercel(개인 계정) 연결, Preview 배포, 카카오톡 실기기 점검 | TEST_PLAN §11 G5-B 기준 충족(성능 기준 완화 없음), 사용자 승인 |
+| **G6** 정식 공개 | Production 검증 완료, 사진 결정 완료, 카카오 프로필에 링크 게시 | TEST_PLAN §11 공개 기준 충족, 사용자 승인 |
 
 ## 파일 구조
 
@@ -1982,30 +1983,42 @@ Expected: 지적 0건. 또는 모든 지적에 오탐 사유가 있어야 한다
 
 **완료 조건:** 자동·수동 감사 통과 기록, 사용자 확인.
 
-### Task 12: 원격 저장소와 Preview (G5)
+### Task 12: Public 저장소 (G5-A)
 
-- [ ] **Step 1: G5 승인과 계정 준비.** 사용자가 직접 실행한다: `! gh auth login`(개인 계정 `wantraiseapomeranian` 추가), `! gh auth switch --user wantraiseapomeranian`
+저장소 공개는 사이트 공개가 아니다. 사이트 공개는 Task 13(G6)에서 한다.
+
+- [ ] **Step 1: G5-A 승인과 계정 준비.** 사용자가 직접 실행한다: `! gh auth login`(개인 계정 `wantraiseapomeranian` 추가), `! gh auth switch --user wantraiseapomeranian`
 - [ ] **Step 2: 계정 확인.**
 
 ```bash
 gh auth status            # Active account: wantraiseapomeranian 이어야 함. 아니면 중단
-git config user.email     # 189066806+wantraiseapomeranian@users.noreply.github.com
+git config user.email     # 189066806+wantraiseapomeranian@users.noreply.github.com (이 저장소 로컬 설정)
 ```
-- [ ] **Step 3: 저장소 생성과 push.** 저장소 이름은 사용자가 확정한 이름을 쓴다(제안 `gyul-market`).
+- [ ] **Step 3: 공개 전 보안 검사.** Git 이력 전체(모든 커밋의 파일·메시지·작성자·커미터)와 추적 파일에서 비밀정보·인증정보·개인정보·공개에 부적절한 파일을 찾는다. 하나라도 나오면 저장소 생성과 push를 멈추고 보고한다. 2026-11-06 검사와 이력 재작성은 AUDIT G5A-1에 있다.
+- [ ] **Step 4: 테스트와 빌드.** `npm run lint`, `npm test`. 알려진 실패는 PERF-1 하나뿐이어야 하고, 성능 기준은 완화하지 않는다.
+- [ ] **Step 5: 저장소 생성과 push.** push 대상은 `main` 하나다. Windows 자격 증명 관리자의 다른 계정이 쓰이지 않도록 push 명령에만 `gh` 인증을 지정한다.
 
 ```bash
-gh repo create wantraiseapomeranian/gyul-market --private --source . --remote origin --push
-git remote -v
+git for-each-ref          # refs/heads/main 하나뿐이어야 함
+gh repo create wantraiseapomeranian/gyul-market --public --source . --remote origin
+git -c credential.helper= -c credential.helper='!gh auth git-credential' push -u origin main
+git ls-remote origin      # HEAD와 refs/heads/main만
 ```
-- [ ] **Step 4: Vercel 연결(사용자 작업).** 개인 계정 `wantraiseapomeranian`으로 Vercel 대시보드에 로그인한다. Add New → Project → 위 저장소 Import → Framework: Next.js → Deploy. 환경 변수는 필요 없다(`VERCEL_PROJECT_PRODUCTION_URL`은 Vercel이 자동 제공).
+- [ ] **Step 6: 브랜치 운영.** 이후 변경은 `t<번호>-<요약>` 브랜치 → PR → 사용자 확인 → squash merge 순서로 한다. G5-B 이후에는 PR마다 Vercel Preview를 확인한다. `main` 직접 push는 하지 않는다.
+
+**완료 조건:** public 저장소에 `main`만 있고, 커밋 이메일이 모두 noreply이며, 보안 검사 0건.
+
+### Task 12B: Preview (G5-B)
+
+- [ ] **Step 1: G5-B 승인.** TEST_PLAN §11 G5-B 기준(성능 포함, 완화 없음)을 충족한 뒤 요청한다.
+- [ ] **Step 2: Vercel 연결(사용자 작업).** 개인 계정 `wantraiseapomeranian`으로 Vercel 대시보드에 로그인한다. Add New → Project → 위 저장소 Import → Framework: Next.js → Deploy. 환경 변수는 필요 없다(`VERCEL_PROJECT_PRODUCTION_URL`은 Vercel이 자동 제공).
   - 카카오 실기기 테스트를 위해 Settings → Deployment Protection에서 Vercel Authentication을 이 프로젝트만 끄거나, Preview 공유 링크를 쓴다.
   - 처음 Import하면 `main`이 바로 Production(`<프로젝트>.vercel.app`)으로 배포된다. 이 주소는 noindex이며 G6 전까지 어디에도 공유하지 않는다(카카오에 붙여 넣으면 OG가 캐시되므로 금지).
-- [ ] **Step 5: 브랜치 운영.** 이후 변경은 `t<번호>-<요약>` 브랜치 → PR → Vercel Preview → 사용자 확인 → squash merge 순서로 한다. `main` 직접 push는 하지 않는다.
-- [ ] **Step 6: Preview에서 TEST_PLAN §6 실기기 테스트를 진행하고 결과를 `docs/AUDIT.md`에 기록한다.**
+- [ ] **Step 3: Preview에서 TEST_PLAN §6 실기기 테스트를 진행하고 결과를 `docs/AUDIT.md`에 기록한다.**
 
-**완료 조건:** private 저장소 존재, Preview URL에서 전 흐름 동작, 실기기 체크리스트 통과.
+**완료 조건:** Preview URL에서 전 흐름 동작, 실기기 체크리스트 통과.
 
-### Task 13: 공개 (G6)
+### Task 13: 정식 공개 (G6)
 
 - [ ] **Step 1: 공개 전 결정 확인** — 최종 사진(교체 시 같은 파일명으로 바꾸고 Task 10 기준 이미지를 다시 승인받는다), 배포 주소
 - [ ] **Step 2: Production 확인** — `main` 최신 배포 URL에서 TEST_PLAN §11 공개 기준을 전부 확인한다
@@ -2021,7 +2034,7 @@ git remote -v
 
 ```
 T0 → T1 → T2 ─┐
-              ├→ T3 → T4 → T5 → T6 → T7 → T8 → T9 → T10 → T11 → T12(G5) → T13(G6)
+              ├→ T3 → T4 → T5 → T6 → T7 → T8 → T9 → T10 → T11 → T12(G5-A) → T12B(G5-B) → T13(G6)
 ```
 T2(로직)와 T3(기반)은 서로 독립이라 병렬로 진행할 수 있다. T4부터는 앞 작업의 컴포넌트를 쓰므로 순서대로 진행한다.
 

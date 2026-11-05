@@ -89,7 +89,7 @@ PLAN '상태 전이' 표의 모든 행을 단위 테스트로 덮고, 사용자 
 ## 6. 카카오톡 인앱 브라우저 실기기 테스트
 
 **대상 기기:** iPhone(iOS 최신, 카카오톡 최신) 1대 이상, Android(갤럭시, 카카오톡 최신) 1대 이상. 가능하면 작은 화면(iPhone SE급) 1대를 추가한다.
-**대상 URL:** G5 Preview(보호 해제 또는 공유 링크) → G6 직전 Production.
+**대상 URL:** G5-B Preview(보호 해제 또는 공유 링크) → G6 직전 Production.
 
 | # | 항목 | 통과 기준 |
 |---|---|---|
@@ -155,7 +155,7 @@ PLAN '상태 전이' 표의 모든 행을 단위 테스트로 덮고, 사용자 
 | INP | ≤ 200ms | `tests/perf.spec.ts` 실험실 근사(event timing) + 실기기 확인 |
 | CLS | ≤ 0.1 | `tests/perf.spec.ts` 실험실 측정 + 실기기 확인 |
 | TBT | ≤ 200ms | Lighthouse |
-| Lighthouse 점수 | 성능 ≥ 90, 접근성 ≥ 95, 권장사항 ≥ 95 | 로컬 미설치 — 미검증, G5 Preview에서 Chrome DevTools로 측정 |
+| Lighthouse 점수 | 성능 ≥ 90, 접근성 ≥ 95, 권장사항 ≥ 95 | 로컬 미설치 — 미검증, G5-B Preview에서 Chrome DevTools로 측정 |
 | 대표 사진 전송량 | ≤ 150KB (AVIF/WebP) | DevTools Network |
 | 첫 화면 폰트 전송량 | ≤ 250KB(필요한 unicode-range 조각만) | DevTools Network |
 | 외부 요청 | 0건 | meta 테스트 |
@@ -168,15 +168,22 @@ PLAN '상태 전이' 표의 모든 행을 단위 테스트로 덮고, 사용자 
 - §8 디자인 감사 기록이 있다(화면 작업일 때).
 - 커밋을 남겼다.
 
-### G5: Preview 준비
-- `npm test` 전부 통과(단위 11, E2E 세 프로젝트, axe 0, 시각 12)
-- 시각 기준 이미지 12장 사용자 승인
-- `docs/AUDIT.md`에 디자인 감사(§8) 통과 기록
-- 첫 로드 JS ≤ 160KB(150KB 초과 시 경고)와 `tests/perf.spec.ts`의 LCP ≤ 2.5초·INP ≤ 200ms·CLS ≤ 0.1 충족, 외부 요청 0건
-- Preview의 `og:image`는 Production 도메인을 가리킨다(`VERCEL_PROJECT_PRODUCTION_URL`은 Preview에도 설정됨). 링크 미리보기 최종 확인은 G6 Production에서 한다
+### G5-A: Public 저장소
+- Git 이력 전체(모든 커밋의 파일·메시지·작성자·커미터)와 추적 파일에 비밀정보·인증정보·개인정보·공개에 부적절한 파일 0건. 하나라도 있으면 저장소 생성과 push를 멈추고 보고
+- 커밋 작성자·커미터 이메일이 모두 GitHub noreply 주소
+- push 대상은 `main` 하나. 재작성 전 이력을 가리키는 ref(`refs/original`, 백업 브랜치, 태그)가 없음
+- 단위 테스트, lint, 빌드, E2E 실행. 실패는 PERF-1(성능) 하나만 허용하고 AUDIT에 그대로 둔다(사용자 결정 2026-11-06). 성능 기준은 완화하지 않으며 G5-B에서 적용한다
 - GitHub 활성 계정이 `wantraiseapomeranian`
 
-### G6: 공개
+### G5-B: Preview
+- G5-A 완료
+- `npm test` 전부 통과(단위 11, E2E 세 프로젝트, axe 0, 시각 12). 성능 테스트 포함
+- 시각 기준 이미지 12장 사용자 승인
+- `docs/AUDIT.md`에 디자인 감사(§8) 통과 기록
+- 첫 로드 JS ≤ 160KB(150KB 초과 시 경고)와 `tests/perf.spec.ts`의 LCP ≤ 2.5초·INP ≤ 200ms·CLS ≤ 0.1 충족, 외부 요청 0건. 이 기준은 완화하지 않는다(사용자 결정 2026-11-06). PERF-1이 열려 있으면 G5-B를 요청하지 않는다
+- Preview의 `og:image`는 Production 도메인을 가리킨다(`VERCEL_PROJECT_PRODUCTION_URL`은 Preview에도 설정됨). 링크 미리보기 최종 확인은 G6 Production에서 한다
+
+### G6: 정식 공개
 - 카카오톡 실기기 §6 K1~K17을 iOS·Android에서 통과(예외는 사유와 함께 사용자 수용)
 - Production URL Lighthouse §10 기준 충족
 - 카카오 공유 디버거로 OG 캐시를 갱신했고, 미리보기가 DESIGN §8과 같음
@@ -192,4 +199,4 @@ PLAN '상태 전이' 표의 모든 행을 단위 테스트로 덮고, 사용자 
 | 날짜 | 구분(기능·시각·접근성·성능·실기기·디자인) | 내용 | 재현 | 심각도(차단·주요·경미) | 조치 | 상태 |
 |---|---|---|---|---|---|---|
 
-- '차단' 결함이 하나라도 열려 있으면 G5·G6를 요청하지 않는다.
+- 어떤 단계(G5-A·G5-B·G6)를 막는 '차단' 결함이 열려 있으면 그 단계를 요청하지 않는다.
