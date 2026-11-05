@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { open, toSelect, pickRow, toMeasure, tapFruit } from './helpers';
+import { open, toSelect, pickRow, toMeasure, tapFruit, toResult, toJudging } from './helpers';
 
 test.describe('① 상품 상세', () => {
   test.beforeEach(async ({ page }) => { await open(page); });
@@ -85,5 +85,45 @@ test.describe('③ 당도 측정', () => {
     await page.getByRole('button', { name: /귤 누르기/ }).focus();
     await page.keyboard.press('Space');
     await expect(page.getByText('1 / 5회')).toBeVisible();
+  });
+});
+
+test.describe('④ 결과 · ⑤ 판정 전환', () => {
+  test('고른 시료만 당도를 보이고 나머지는 미검사다', async ({ page }) => {
+    await open(page);
+    await toResult(page, 'C');
+    await expect(page.getByText('15.8')).toBeVisible();
+    await expect(page.getByText('미검사')).toHaveCount(2);
+    await expect(page.getByText('검사 완료', { exact: true })).toBeAttached();
+    await expect(page.getByText('발급 대기')).toBeVisible();
+  });
+
+  test('당도는 규격과 무관하게 배정된다 (random=0 → C는 12.4)', async ({ page }) => {
+    await open(page, { random: 0 });
+    await toResult(page, 'C');
+    await expect(page.getByText('12.4')).toBeVisible();
+  });
+
+  test('다시 검사하면 선택으로 돌아가고 선택이 풀린다', async ({ page }) => {
+    await open(page);
+    await toResult(page);
+    await page.getByRole('button', { name: '다시 검사' }).click();
+    await expect(page.getByRole('button', { name: '검사할 귤을 고르세요' })).toBeDisabled();
+  });
+
+  test('판정 받기 → 1500ms 뒤 엔딩', async ({ page }) => {
+    await open(page);
+    await toJudging(page);
+    await page.clock.runFor(1400);
+    await expect(page.getByRole('heading', { name: '귤은 없습니다.' })).toHaveCount(0);
+    await page.clock.runFor(200);
+    await expect(page.getByRole('heading', { name: '귤은 없습니다.' })).toBeVisible();
+  });
+
+  test('축소 모션이면 800ms 뒤 엔딩', async ({ page }) => {
+    await open(page, { reducedMotion: true });
+    await toJudging(page);
+    await page.clock.runFor(850);
+    await expect(page.getByRole('heading', { name: '귤은 없습니다.' })).toBeVisible();
   });
 });

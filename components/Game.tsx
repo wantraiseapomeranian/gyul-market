@@ -4,6 +4,8 @@ import { reduce, initialState, assignBrix, formatDocDate, TAPS_REQUIRED } from '
 import { BottomBar } from './BottomBar';
 import { SelectScreen } from './screens/SelectScreen';
 import { MeasureScreen } from './screens/MeasureScreen';
+import { ResultScreen } from './screens/ResultScreen';
+import { JudgingScreen } from './screens/JudgingScreen';
 
 export function Game({ product }: { product: ReactNode }) {
   const [s, dispatch] = useReducer(reduce, initialState);
@@ -52,6 +54,10 @@ export function Game({ product }: { product: ReactNode }) {
       return <SelectScreen {...props} />;
     case 'measure':
       return <MeasureScreen {...props} />;
+    case 'result':
+      return <ResultScreen {...props} />;
+    case 'judging':
+      return <JudgingScreen headingRef={headingRef} />;
     default:
       return null; // Task 6~8에서 measure·result·judging·ending을 채운다
   }
