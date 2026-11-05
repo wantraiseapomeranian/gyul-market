@@ -120,6 +120,18 @@ test.describe('④ 결과 · ⑤ 판정 전환', () => {
     await expect(page.getByRole('button', { name: '검사할 귤을 고르세요' })).toBeDisabled();
   });
 
+  test('다시 검사하면 당도를 새로 배정한다', async ({ page }) => {
+    await open(page);
+    await toResult(page, 'C'); // C = 15.8
+    await page.evaluate(() => { Math.random = () => 0; }); // assignBrix(()=>0) → C 12.4
+    await page.getByRole('button', { name: '다시 검사' }).click();
+    await pickRow(page, 'C').click();
+    await page.getByRole('button', { name: 'C 시료 검사 시작' }).click();
+    await tapFruit(page, 5);
+    await page.clock.runFor(500);
+    await expect(page.getByText('12.4')).toBeVisible();
+  });
+
   test('판정 받기 → 1500ms 뒤 엔딩', async ({ page }) => {
     await open(page);
     await toJudging(page);
@@ -185,5 +197,17 @@ test.describe('⑥ 엔딩 · 공유', () => {
     await toEnding(page);
     await page.getByRole('button', { name: '다시 검사하기' }).click();
     await expect(page.getByRole('heading', { name: '당도 검사', exact: true })).toBeVisible();
+  });
+
+  test('엔딩에서 다시 검사하면 당도를 새로 배정한다', async ({ page }) => {
+    await open(page);
+    await toEnding(page);
+    await page.evaluate(() => { Math.random = () => 0; });
+    await page.getByRole('button', { name: '다시 검사하기' }).click();
+    await pickRow(page, 'C').click();
+    await page.getByRole('button', { name: 'C 시료 검사 시작' }).click();
+    await tapFruit(page, 5);
+    await page.clock.runFor(500);
+    await expect(page.getByText('12.4')).toBeVisible();
   });
 });

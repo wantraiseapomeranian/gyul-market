@@ -6,6 +6,7 @@ test('noindex, color-scheme, viewport-fit, OG', async ({ page }) => {
   await open(page);
   const meta = (sel: string) => page.locator(sel).getAttribute('content');
   expect(await meta('meta[name="robots"]')).toContain('noindex');
+  expect(await meta('meta[name="robots"]')).toContain('nofollow');
   expect(await meta('meta[name="color-scheme"]')).toBe('light');
   expect(await meta('meta[name="viewport"]')).toContain('viewport-fit=cover');
   expect(await meta('meta[property="og:title"]')).toBe('제주 서귀포 햇귤 10kg · 29,900원 | 귤상회');
@@ -56,4 +57,14 @@ test('첫 로드 JS 전송량 ≤ 130KB', async ({ page }) => {
       .reduce((n, e) => n + e.encodedBodySize, 0));
   expect(bytes).toBeGreaterThan(0);
   expect(bytes).toBeLessThanOrEqual(130 * 1024);
+});
+
+test('보안·검색 차단 헤더', async ({ request }) => {
+  const h = (await request.get('/')).headers();
+  expect(h['x-robots-tag']).toBe('noindex, nofollow');
+  expect(h['x-content-type-options']).toBe('nosniff');
+  expect(h['referrer-policy']).toBe('strict-origin-when-cross-origin');
+  expect(h['x-frame-options']).toBe('DENY');
+  expect(h['permissions-policy']).toBe('camera=(), microphone=(), geolocation=()');
+  expect(h['x-powered-by']).toBeUndefined();
 });
