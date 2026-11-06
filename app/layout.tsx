@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     siteName: '귤상회',
     title: TITLE,
     description: DESC,
-    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: '선별대 위 노지감귤과 선별 태그' }],
+    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: '잎 달린 귤과 껍질을 벗긴 귤, 선별 태그' }],
   },
 };
 
