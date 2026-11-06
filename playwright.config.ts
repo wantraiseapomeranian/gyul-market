@@ -7,6 +7,7 @@ const KAKAO_AOS = 'Mozilla/5.0 (Linux; Android 14; SM-S921N) AppleWebKit/537.36 
 
 export default defineConfig({
   testDir: 'tests',
+  testIgnore: process.env.PERF_DIAG ? [] : [/perf-diag\.spec\.ts$/], // 진단은 요청할 때만(npm test에서 제외)
   workers: 2,
   snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{arg}{ext}',
   expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: 'disabled' } },
