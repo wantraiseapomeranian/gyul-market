@@ -1,0 +1,27 @@
+# 공식 성능 테스트(tests/perf.spec.ts)를 GitHub 호스트 러너에서 실행한다.
+# G5-B 성능 판정은 이 결과로 한다(TEST_PLAN §11, 사용자 결정 2026-11-06). 기준값은 테스트 안에 있다.
+name: perf
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npx playwright test tests/perf.spec.ts --project=m390 --workers=1
