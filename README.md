@@ -43,4 +43,4 @@ npm test             # 단위 → 프로덕션 빌드 → E2E(390px·360px·WebK
 - [`docs/PLAN.md`](docs/PLAN.md) 구현 계획과 승인 단계
 - [`docs/TEST_PLAN.md`](docs/TEST_PLAN.md) 테스트 계획
 - [`docs/AUDIT.md`](docs/AUDIT.md) 결함과 감사 기록
-- [`docs/ASSETS.md`](docs/ASSETS.md) 사진 출처(Unsplash, 임시 사진)와 글꼴 라이선스
+- [`docs/ASSETS.md`](docs/ASSETS.md) 사진 출처(Unsplash)·편집 이력과 글꼴 라이선스

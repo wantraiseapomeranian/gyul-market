@@ -11,7 +11,7 @@ export function ProductPage() {
     <main className="has-bar">
       <header className="mainhead"><Wordmark /></header>
       <div className="gallery">
-        <Image src={hero} alt="선별대 위에 놓인 노지감귤. 초록빛이 남은 것과 노랗게 익은 것이 섞여 있다" loading="eager" fetchPriority="high" sizes={SIZES} placeholder="blur" />
+        <Image src={hero} alt="어두운 나무 위에 놓인 잎 달린 귤들과, 껍질을 반쯤 벗겨 과육이 보이는 귤" loading="eager" fetchPriority="high" sizes={SIZES} placeholder="blur" />
         <SortingTag />
       </div>
       <section className="head" aria-label="상품 정보">
@@ -34,7 +34,7 @@ export function ProductPage() {
         </figure>
       </section>
       <footer className="foot">
-        <p>사진: Unsplash · insung yoon, Luis Guaman</p>
+        <p>사진: Unsplash · Jonathan Pielmayer, insung yoon, Luis Guaman</p>
       </footer>
     </main>
   );
