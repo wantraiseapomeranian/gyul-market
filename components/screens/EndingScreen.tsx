@@ -5,7 +5,7 @@ import { Stamp } from '../Stamp';
 import { ShareIcon } from '../icons';
 import type { ScreenProps } from './types';
 
-const SHARE_TEXT = '제주 햇귤 당도 검사, 10초면 돼요.'; // 결과를 말하지 않는다(FR-14)
+const SHARE_TEXT = '제주 서귀포 햇귤 10kg, 29,900원'; // 결과도, 당도 검사도 미리 말하지 않는다(FR-14)
 
 export function EndingScreen({ s, dispatch, headingRef, today }: ScreenProps) {
   const fruit = s.pick!;
@@ -68,7 +68,7 @@ export function EndingScreen({ s, dispatch, headingRef, today }: ScreenProps) {
           </label>
         ) : null}
       </div>
-      <p className="disc">귤상회(가칭)는 가상의 상점입니다.<br />판매·결제·배송은 일어나지 않았습니다.</p>
+      <p className="disc">사실 귤상회는 가상의 쇼핑몰입니다.<br />구매 과정은 게임을 위한 연출이며,<br />실제 주문이나 결제는 이루어지지 않았습니다.</p>
     </main>
   );
 }

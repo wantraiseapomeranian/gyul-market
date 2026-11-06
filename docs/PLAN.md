@@ -19,7 +19,7 @@
 - 애니메이션 라이브러리·상태 라이브러리·UI 킷을 쓰지 않는다. CSS 애니메이션과 `useReducer`만 쓴다
 - 서버 기능 금지: API 라우트, Server Actions, DB, 쿠키, 분석 도구, 결제, 회원가입, 입력 폼 없음
 - 런타임 외부 요청 0건. 폰트·이미지는 자체 호스팅
-- 버튼 문구에 '구매' 금지. 동작하지 않는 UI 금지
+- '구매하기'는 상품 하단 바와 수량 시트 버튼에만(2026-11-06 D1). 주문 접수·결제 완료·배송지 입력 연출 금지(D5). 동작하지 않는 UI 금지
 - 색·서체·크기·시간 값은 DESIGN.md 표의 값만 쓴다(DESIGN §2, DESIGN §6). 토큰 이름은 `ink, ink-2, mute, control, dash, line, band, paper, camellia, slate`
 - 모든 화면 작업은 390×844와 360×780 스크린샷을 남기고 DESIGN.md §9 감사 기준으로 확인해야 완료다
 - 커밋 메시지 끝에 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`
@@ -90,7 +90,19 @@
 | ending | `retry{brix}` | — | select | brix 새 배정, pick=null, taps=0 |
 | 그 밖 | 모든 이벤트 | — | 그대로 | 무시 |
 
-브라우저 history는 쓰지 않는다. 새로고침하면 상품 화면부터 다시 시작한다.
+게임 화면은 브라우저 history를 쓰지 않는다. 새로고침하면 상품 화면부터 다시 시작한다.
+
+**구매 진입(T14)은 이 리듀서 밖에 있다.** `Game.tsx`의 `qty`(1~5)와 `overlay`(없음 / `qty` / `notice`)만 쓰고, 검사를 시작할 때 기존 `start{brix}`를 보낸다.
+
+| overlay | 사건 | history | 다음 |
+|---|---|---|---|
+| 없음 | 상품 **구매하기** | `pushState({ov:'qty'})` | qty |
+| qty | 시트 **구매하기** | `pushState({ov:'notice'})` | notice(시트는 아래에 열린 채) |
+| qty·notice | 닫기 · ESC · 바깥 누름 · 뒤로가기 | `history.back()` → `popstate` | `popstate`의 `state.ov`(notice → qty → 없음) |
+| notice | **당도 검사 시작하기** | `history.go(-2)` | 없음 + `start{brix}` → select |
+
+- 같은 창을 연타로 두 번 쌓지 않는다(`history.state.ov`가 같으면 무시). 시작은 한 번만(`go(-2)` 중복 방지).
+- 여는 애니메이션 중의 바깥 누름은 무시한다(앞 버튼 연타가 새 창을 닫지 않게).
 
 ---
 
@@ -2030,11 +2042,27 @@ git ls-remote origin      # HEAD와 refs/heads/main만
 
 ---
 
+### Task 14: 구매 진입 개편 (t19, 2026-11-06)
+
+사용자 승인 범위: 브랜치 `t19-purchase-flow`와 PR 생성까지. `main` 머지(= Vercel Production 자동 배포)는 따로 승인받는다.
+
+- [ ] **Step 1: 결정 반영.** D1~D5(PROJECT §8 결정 기록), 문구(DESIGN §5·§8), FR-1·3·13·15·16·17
+- [ ] **Step 2: 순수 로직.** `lib/game.ts`에 `PRICE`·`MAX_QTY`·`clampQty`·`formatWon`, 단위 테스트 1건. 리듀서는 바꾸지 않는다
+- [ ] **Step 3: UI.** `components/PurchaseDialogs.tsx`(수량 시트·안내 모달, `<dialog>`), `Game.tsx`(qty·overlay·history, 위 '상태 전이'의 구매 진입 표), 고지·예고 문구 제거, 엔딩 고지 교체, OG 설명·공유 문구
+- [ ] **Step 4: 테스트.** helpers(`toSheet`·`toNotice`), flow ①-1(수량·닫기 4방법·뒤로 순서·history 길이·수량 유지·모달 문구·모바일/데스크톱 배치), a11y(시트·모달 axe, 키보드), layout(시트 430px 기둥), meta(OG), perf·perf-diag(새 경로)
+- [ ] **Step 5: 시각.** `--update-snapshots=all`로 전부 다시 만들고 `main`과 픽셀 비교. 바뀐 장과 새 4장(1b-qty, 1c-notice × 390·360)을 PR에서 사용자 승인
+- [ ] **Step 6: 검증.** lint, `npm test` 전부, impeccable 0건, GitHub 러너 `perf` 통과
+- [ ] **Step 7: PR.** 머지와 배포는 사용자 승인 뒤. 머지 후 `main` 커밋 이메일과 `perf` 결과를 확인하고, 실기기 K4·K12·K14·K18·K19를 다시 본다
+
+**완료 조건:** 사용자 화면 승인, 전체 테스트·러너 성능 통과, 머지 승인.
+
+---
+
 ## 의존 관계
 
 ```
 T0 → T1 → T2 ─┐
-              ├→ T3 → T4 → T5 → T6 → T7 → T8 → T9 → T10 → T11 → T12(G5-A) → T12B(G5-B) → T13(G6)
+              ├→ T3 → T4 → T5 → T6 → T7 → T8 → T9 → T10 → T11 → T12(G5-A) → T12B(G5-B) → T14(구매 진입) → T13(G6)
 ```
 T2(로직)와 T3(기반)은 서로 독립이라 병렬로 진행할 수 있다. T4부터는 앞 작업의 컴포넌트를 쓰므로 순서대로 진행한다.
 

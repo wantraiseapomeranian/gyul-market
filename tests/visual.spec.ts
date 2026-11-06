@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { open, toSelect, pickRow, toMeasure, tapFruit, toResult, toJudging, toEnding } from './helpers';
+import { open, toSelect, pickRow, toMeasure, tapFruit, toResult, toJudging, toEnding, toSheet, toNotice, sheet } from './helpers';
 
 // CSS 애니메이션은 page.clock과 무관하게 실제 시간으로 돈다. 노드 쪽에서 실제 시간으로 끝나기를 기다린 뒤 찍는다.
 async function settle(page: Page) {
@@ -13,6 +13,8 @@ async function shot(page: Page, name: string) {
 test.describe('화면 스크린샷', () => {
   test.beforeEach(async ({ page }) => { await open(page); });
   test('1 상품', async ({ page }) => { await expect(page.locator('.tag-stamp')).toBeVisible(); await shot(page, '1-product.png'); });
+  test('1b 수량 시트', async ({ page }) => { await toSheet(page); await sheet(page).getByRole('button', { name: '한 박스 더하기' }).click(); await shot(page, '1b-qty.png'); });
+  test('1c 안내 모달', async ({ page }) => { await toNotice(page); await shot(page, '1c-notice.png'); });
   test('2 선택', async ({ page }) => { await toSelect(page); await pickRow(page, 'C').click(); await shot(page, '2-select.png'); });
   test('3 측정', async ({ page }) => { await toMeasure(page, 'C'); await tapFruit(page, 3); await expect(page.locator('.stamp-cells li[data-state="on"]')).toHaveCount(3); await expect(page.locator('.stamp-cells li[data-state="on"] .stamp').nth(2)).toHaveCSS('opacity', '0.96'); await shot(page, '3-measure.png'); });
   test('4 결과', async ({ page }) => { await toResult(page, 'C'); await expect(page.locator('.inspector .stamp')).toBeVisible(); await shot(page, '4-result.png'); });

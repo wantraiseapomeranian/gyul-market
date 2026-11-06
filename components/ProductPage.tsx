@@ -24,18 +24,16 @@ export function ProductPage() {
       <dl className="info">
         <div><dt>배송</dt><dd>무료배송</dd></div>
         <div><dt>규격</dt><dd>10kg · 2S·S·M 혼합</dd></div>
-        <div><dt>당도 검사</dt><dd>무료 · 10초</dd></div>
       </dl>
       <section className="story">
         <h2>껍질을 까는 순간,<br />달콤한 제주를 만나보세요.</h2>
-        <p>귤상회는 크기는 규격으로, 맛은 당도 검사로 따로 확인합니다.</p>
+        <p>귤상회는 크기별로 골라 담아 보냅니다.</p>
         <figure>
           <Image src={story} alt="수확 자루에 담긴 노지감귤" sizes={SIZES} />
           <figcaption>노지감귤 수확</figcaption>
         </figure>
       </section>
       <footer className="foot">
-        <p>귤상회(가칭)는 실제로 존재하지 않는 가상의 상점입니다. 이 페이지에서는 판매·결제·개인정보 수집이 이뤄지지 않습니다.</p>
         <p>사진: Unsplash · insung yoon, Luis Guaman</p>
       </footer>
     </main>

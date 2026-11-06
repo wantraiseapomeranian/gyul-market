@@ -7,6 +7,9 @@ import { MeasureScreen } from './screens/MeasureScreen';
 import { ResultScreen } from './screens/ResultScreen';
 import { JudgingScreen } from './screens/JudgingScreen';
 import { EndingScreen } from './screens/EndingScreen';
+import { PurchaseDialogs, type Overlay } from './PurchaseDialogs';
+
+const ovOf = (state: unknown) => (state as { ov?: Overlay } | null)?.ov ?? null;
 
 export function Game({ product }: { product: ReactNode }) {
   const [s, dispatch] = useReducer(reduce, initialState);
@@ -14,6 +17,35 @@ export function Game({ product }: { product: ReactNode }) {
   // 렌더 중 new Date()는 react-hooks/purity 위반이라 지연 초기값으로 한 번만 읽는다.
   // ponytail: 자정을 넘겨 계속 플레이해도 날짜는 첫 렌더 기준. 20초 체험이라 갱신하지 않는다
   const [today] = useState(() => formatDocDate(new Date()));
+
+  // 구매 진입(수량 시트 → 안내 모달). 게임 리듀서와 분리된 화면 상태다. Game은 계속 마운트되어 있어 수량이 유지된다
+  const [qty, setQty] = useState(1);
+  const [overlay, setOverlay] = useState<Overlay | null>(null);
+  const leaving = useRef(false);
+  const ctaRef = useRef<HTMLButtonElement>(null);
+
+  // D4: 열린 창마다 history 항목 하나({ov}). 닫기·ESC·바깥·뒤로는 모두 popstate 하나로 상태를 맞춘다
+  useEffect(() => {
+    // ponytail: 창이 열린 채 새로고침하면 현재 항목만 비운다(그 뒤 남는 항목은 뒤로 한 번 더 누르면 사라짐, 드문 경우)
+    if (ovOf(history.state)) history.replaceState(null, '');
+    const onPop = (e: PopStateEvent) => { leaving.current = false; setOverlay(ovOf(e.state)); };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+  const openOverlay = (ov: Overlay) => {
+    if (ovOf(history.state) === ov) return; // 연타로 같은 항목을 두 번 쌓지 않는다
+    leaving.current = false;
+    history.pushState({ ov }, '');
+    setOverlay(ov);
+  };
+  const closeOverlay = () => history.back();
+  const startGame = () => {
+    if (leaving.current) return; // 연타로 go(-2)가 두 번 나가면 페이지를 떠난다
+    leaving.current = true;
+    history.go(-2); // 시트·모달 항목을 걷어 낸다: 게임 화면에서 뒤로는 기존처럼 페이지 이탈(FR-13)
+    setOverlay(null);
+    dispatch({ type: 'start', brix: assignBrix(Math.random) });
+  };
 
   // 화면이 바뀌면 맨 위로 + 제목에 초점 (DESIGN §10). 첫 진입(및 StrictMode 재실행)에서는 아무것도 하지 않는다
   const prevScreen = useRef(s.screen);
@@ -49,10 +81,10 @@ export function Game({ product }: { product: ReactNode }) {
         <>
           {product}
           <BottomBar>
-            <button className="btn-primary" onClick={() => dispatch({ type: 'start', brix: assignBrix(Math.random) })}>
-              당도 검사 받기<small>무료 · 10초</small>
-            </button>
+            <button ref={ctaRef} className="btn-primary" onClick={() => openOverlay('qty')}>구매하기</button>
           </BottomBar>
+          <PurchaseDialogs overlay={overlay} qty={qty} setQty={setQty}
+            onBuy={() => openOverlay('notice')} onStart={startGame} onClose={closeOverlay} opener={ctaRef} />
         </>
       );
     case 'select':
