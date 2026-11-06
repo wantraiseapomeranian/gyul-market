@@ -311,11 +311,11 @@
 ## G5-B Preview (2026-11-06)
 
 - Vercel 프로젝트 `gyul-market`. 개인 Hobby 팀(`wantraiseapomeranian's projects`)에 Git 연결로 만들었다. Vercel GitHub 앱은 이미 개인 계정에 설치되어 있어 그대로 썼다. 환경 변수는 없다.
-- 첫 배포: `main` `84f8e02`가 Production으로 배포됐다(빌드 32초). Production 도메인 `gyul-market-xi.vercel.app`(`gyul-market.vercel.app`은 이미 사용 중). G6 전까지 공유하지 않는다.
+- 첫 배포: `main` `84f8e02`가 Production으로 배포됐다(빌드 32초). Production 도메인은 `*.vercel.app` 기본 도메인이다(`gyul-market.vercel.app`은 이미 사용 중이라 접미사가 붙음). G6 전까지 공유하지 않으므로 이 문서에도 적지 않는다. Vercel 프로젝트 설정 → Domains에서 확인한다.
 - 배포 점검(`curl`):
   - `X-Robots-Tag: noindex, nofollow`와 `<meta name="robots" content="noindex, nofollow">`
   - nosniff·Referrer-Policy·X-Frame-Options·Permissions-Policy, Vercel이 붙인 HSTS
-  - `og:image`는 `https://gyul-market-xi.vercel.app/og.jpg`이고 200으로 받아짐(1200×630, 132,838B)
+  - `og:image`는 Production 도메인의 `/og.jpg`이고 200으로 받아짐(1200×630, 132,838B)
   - HTML의 외부 출처 0건
 - Deployment Protection: 기본값(Standard Protection)은 배포 고유 주소에 Vercel 로그인을 요구한다.
   - 실기기 점검 동안 사용자가 이 프로젝트의 'Require Log In'을 직접 껐다. 자동화로 끄려던 시도는 보안 검사에서 막혀 실행되지 않았다.
