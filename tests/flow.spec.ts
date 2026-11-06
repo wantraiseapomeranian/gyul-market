@@ -275,7 +275,12 @@ test.describe('⑥ 엔딩 · 공유', () => {
   test('판정서 내용과 고지', async ({ page }) => {
     await open(page);
     await toEnding(page);
-    for (const t of ['로얄 낚임과', '귤 0kg', '0원', 'C · 규격 M', '2026.11.05']) await expect(page.getByText(t)).toBeVisible();
+    const cert = page.locator('.cert');
+    for (const t of ['C · 규격 M', '15.8 °Bx', '로얄 낚임과', '1박스 (29,900원)', '귤 0kg · 0원']) await expect(cert).toContainText(t);
+    await expect(page.getByText('2026.11.05')).toBeVisible();
+    await expect(cert.getByText('귤은 없었지만, 고객님의 믿음은 진품으로 판정합니다.')).toBeVisible(); // random 0.999 → 로얄, 3번째 줄
+    await expect(cert.getByText(/한 박스로 신중하게 시작하셨습니다/)).toBeVisible();                   // 기본 1박스
+    await expect(page.locator('.e-head p:not(.e-no)')).toContainText('낚일 준비가 얼마나 되어 있는지였습니다.');     // 1회차: 반전 설명
     await expect(page.locator('.disc')).toHaveText('사실 귤상회는 가상의 쇼핑몰입니다.구매 과정은 게임을 위한 연출이며,실제 주문이나 결제는 이루어지지 않았습니다.');
   });
 
@@ -338,5 +343,82 @@ test.describe('⑥ 엔딩 · 공유', () => {
     await page.clock.runFor(500);
     await expect(page.getByRole('heading', { name: '검사 결과' })).toBeVisible();
     await expect(page.getByText('12.4')).toBeVisible();
+  });
+});
+
+test.describe('⑥-1 판정 다양화(T21)', () => {
+  const finishRound = async (page: Page, fruit = 'C') => {
+    await pickRow(page, fruit as 'A' | 'B' | 'C').click();
+    await page.getByRole('button', { name: `${fruit} 시료 검사 시작` }).click();
+    await tapFruit(page, 5);
+    await page.clock.runFor(500);
+    await page.getByRole('button', { name: '최종 판정 받기' }).click();
+    await page.clock.runFor(1600);
+    await expect(page.getByRole('heading', { name: '귤은 없습니다.' })).toBeVisible();
+  };
+  const explain = (page: Page) => page.locator('.e-head p:not(.e-no)');
+
+  test('한 줄 판정은 판정 확정 때 한 번 정하고, 다시 그려져도 바뀌지 않는다', async ({ page }) => {
+    await open(page);
+    await toEnding(page);
+    const line = page.locator('.cert .note').first();
+    await expect(line).toHaveText('귤은 없었지만, 고객님의 믿음은 진품으로 판정합니다.');
+    await page.evaluate(() => { Math.random = () => 0; });          // 이후 난수가 바뀌어도
+    await page.getByRole('button', { name: '링크 복사' }).click();  // 상태가 바뀌어 다시 그려진다
+    await expect(line).toHaveText('귤은 없었지만, 고객님의 믿음은 진품으로 판정합니다.');
+  });
+
+  test('수량은 두 번째 축: 5박스면 금액과 대량 구매 소견, 등급은 당도 그대로', async ({ page }) => {
+    await open(page);
+    await toSheet(page);
+    for (let i = 0; i < 4; i++) await sheet(page).getByRole('button', { name: '한 박스 더하기' }).click();
+    await sheet(page).getByRole('button', { name: '구매하기' }).click();
+    await notice(page).getByRole('button', { name: '당도 검사 시작하기' }).click();
+    await finishRound(page);
+    const cert = page.locator('.cert');
+    await expect(cert).toContainText('5박스 (149,500원)');
+    await expect(cert.getByText(/대량 구매 의향이 확인되었습니다/)).toBeVisible();
+    await expect(cert).toContainText('로얄 낚임과');
+  });
+
+  test('재검사 회차: 1회차 반전 설명 → 2회차 → 3회차 → 4회차 이상 공통 문구', async ({ page }) => {
+    await open(page);
+    await toEnding(page);
+    await expect(explain(page)).toContainText('낚일 준비가 얼마나 되어 있는지였습니다.');
+    const expected = ['두 번째 검사입니다.', '세 번째 검사입니다.', '꾸준히 검사해 주셔서 감사합니다.', '꾸준히 검사해 주셔서 감사합니다.'];
+    for (const t of expected) {
+      await page.getByRole('button', { name: '다시 검사하기' }).click();
+      await finishRound(page);
+      await expect(explain(page)).toContainText(t);
+    }
+  });
+
+  test('같은 판 안에서 화면을 오가도 회차는 늘지 않는다', async ({ page }) => {
+    await open(page);
+    await toMeasure(page, 'C');
+    await page.getByRole('button', { name: '귤 다시 고르기' }).click();
+    await finishRound(page);
+    await expect(explain(page)).toContainText('낚일 준비가 얼마나 되어 있는지였습니다.');
+  });
+
+  test('상품까지 돌아가 새로 시작하면 새 판(2회차)이다', async ({ page }) => {
+    await open(page);
+    await toSelect(page);
+    await page.getByRole('button', { name: '상품으로 돌아가기' }).click();
+    await toSelect(page);
+    await finishRound(page);
+    await expect(explain(page)).toContainText('두 번째 검사입니다.');
+  });
+
+  test('새로고침하면 회차가 처음으로 돌아간다(저장하지 않음)', async ({ page }) => {
+    await open(page);
+    await toEnding(page);
+    await page.getByRole('button', { name: '다시 검사하기' }).click();
+    await finishRound(page);
+    await expect(explain(page)).toContainText('두 번째 검사입니다.');
+    await page.reload();
+    await toEnding(page);
+    await expect(explain(page)).toContainText('낚일 준비가 얼마나 되어 있는지였습니다.');
+    expect(await page.evaluate(() => [document.cookie, localStorage.length, sessionStorage.length])).toEqual(['', 0, 0]);
   });
 });
