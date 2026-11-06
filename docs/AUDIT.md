@@ -17,6 +17,7 @@
 | G4W-2 | 전체 | 초점 링이 검정(`ink`)이라 브랜드 색과 따로 놂 | 사용자 결정 2026-11-05 | 전역 `:focus-visible`과 선택 행 `label.sheet-row:has(input:focus-visible)` 외곽선을 `camellia`로. 엔딩은 흰색 유지. DESIGN §10 갱신. 시각 기준 이미지 12장 변경 없음(재생성 없이 12/12 통과) | [상품 전](audit/g4w-focus-product-390-before.png) · [상품 후](audit/g4w-focus-product-390-after.png) · [선택 전](audit/g4w-focus-select-390-before.png) · [선택 후](audit/g4w-focus-select-390-after.png) | 해결 |
 | G5A-1 | 저장소 이력 | Public 공개 전 검사에서 개인정보 1건과 공개 부적절 정보 1건 발견: 개인 이메일(커밋 27개 전부의 작성자·커미터, PLAN.md 3곳), 회사 GitHub 조직 이름(PLAN.md의 계정 복구 안내 1곳). 비밀정보·인증정보·토큰·키·`.env`·전화번호·이미지 메타데이터는 0건 | 첫 커밋부터 PLAN.md에 개인 이메일과 회사 계정 복구 안내가 있었고, git `user.email`이 개인 주소였다 | 사용자 결정 2026-11-06(A안). 저장소 밖에 전체 백업(bundle)을 만들고 복원 확인(해시·트리·커밋 27개 일치, fsck 통과). `git-filter-repo`는 설치되어 있지 않아 설치하지 않았고, 별도 복제본에서 `git filter-branch`로 27개 커밋을 다시 썼다. 바꾼 것: 커밋 이메일 → GitHub noreply, PLAN.md 전역 이메일 확인 줄의 값 삭제, 로컬 설정 줄 2곳 → noreply, 회사 계정 복구 단계 삭제, 커밋 메시지의 되돌림 해시 1곳. 검증: 커밋 27쌍 모두 부모·이름·날짜·메시지가 같고, 다른 파일은 그대로이며, PLAN.md는 변환 결과와 바이트 단위로 같음. 재검사 0건, 재작성 전 커밋 0개 도달. 현재 문서의 해시 참조 7곳 갱신(이전 커밋의 문서에 적힌 옛 해시는 이력 보존을 위해 그대로 둠). 이 저장소의 로컬 `user.email`만 noreply로 바꿈(전역 설정 변경 없음) | — | 해결 |
 | G5A-2 | 저장소 이력 | README PR #1 머지 커밋(`6ea61fe`)의 커미터에 개인 이메일과 프로필 이름이 기록되어 공개 `main`에 들어감(약 15분 노출) | GitHub 계정의 이메일 비공개 설정이 꺼져 있었다. noreply 지정 squash merge는 GitHub가 거부했고, 대신 쓴 rebase merge는 머지한 사용자의 프로필 이름·이메일을 커미터로 기록했다(GitHub가 커미터가 된다고 잘못 가정함) | 사용자 결정 2026-11-06. 사용자가 'Keep my email addresses private'와 'Block command line pushes that expose my email'을 켬(공개 프로필 이메일도 사라짐). 같은 트리·작성자·날짜·메시지로 커미터만 noreply로 바꾼 커밋 `14331de`를 만들고, 브랜치 보호를 몇 초간 내렸다가 `--force-with-lease`(원격이 `6ea61fe`일 때만)로 강제 push한 뒤 같은 설정으로 복구. 확인: `main` 커밋 30개의 작성자·커미터 이메일 60개와 이름 60개 모두 noreply·`wantraiseapomeranian`. 남은 것: PR #1의 머지 기록이 옛 커밋을 가리켜 해시로는 GitHub에서 볼 수 있음(완전 삭제는 GitHub Support 요청 필요). 재발 방지: PLAN Task 12 Step 6 | — | 해결 |
+| G5B-1 | 실기기 | 카카오톡 실기기 점검(TEST_PLAN §6)의 항목별 결과가 기록되지 않음 | 사용자 보고(2026-11-06): 갤럭시 S24 Ultra와 iPhone 14 Pro에서 Preview(배포 고유 주소)에 접속했고 이상이 없었다. K1~K17 항목별 결과, OS·카카오톡 버전은 받지 못했다 | G6 기준('K1~K17을 iOS·Android에서 통과')을 채우려면 항목별로 확인해 기록해야 한다. K2(오픈프로필 진입)는 G6 게시 때 확인한다 | — | 열림 · G6 전 확인 |
 
 ## 디자인 감사 (Task 11)
 
@@ -306,3 +307,21 @@
 - 러너 기계는 실행마다 다를 수 있다(1배 JS 41–47ms인 기계와 68–91ms인 기계). 그래도 실효 배율은 3.0–4.4배였고 결과는 모두 통과였다
 - 공식 테스트 `tests/perf.spec.ts`(PR #4, run 42138508183): LCP 1196ms · INP 64ms · CLS 0.0001, 통과
 - 주의(R3): 러너에서는 LCP 항목이 흐린 자리표시자인 경우가 많다(2회차 17/20, 공식 테스트도 자리표시자). 히어로가 LCP가 된 회차도 최대 1428ms로 기준 안이다
+
+## G5-B Preview (2026-11-06)
+
+- Vercel 프로젝트 `gyul-market`. 개인 Hobby 팀(`wantraiseapomeranian's projects`)에 Git 연결로 만들었다. Vercel GitHub 앱은 이미 개인 계정에 설치되어 있어 그대로 썼다. 환경 변수는 없다.
+- 첫 배포: `main` `84f8e02`가 Production으로 배포됐다(빌드 32초). Production 도메인 `gyul-market-xi.vercel.app`(`gyul-market.vercel.app`은 이미 사용 중). G6 전까지 공유하지 않는다.
+- 배포 점검(`curl`):
+  - `X-Robots-Tag: noindex, nofollow`와 `<meta name="robots" content="noindex, nofollow">`
+  - nosniff·Referrer-Policy·X-Frame-Options·Permissions-Policy, Vercel이 붙인 HSTS
+  - `og:image`는 `https://gyul-market-xi.vercel.app/og.jpg`이고 200으로 받아짐(1200×630, 132,838B)
+  - HTML의 외부 출처 0건
+- Deployment Protection: 기본값(Standard Protection)은 배포 고유 주소에 Vercel 로그인을 요구한다.
+  - 실기기 점검 동안 사용자가 이 프로젝트의 'Require Log In'을 직접 껐다. 자동화로 끄려던 시도는 보안 검사에서 막혀 실행되지 않았다.
+  - 점검 뒤 사용자가 다시 켰다. 확인: 배포 고유 주소와 `main` 브랜치 주소 모두 302(로그인)
+  - Production 도메인은 보호 대상이 아니다(200)
+- 공유·복사 버튼은 `window.location.origin`을 쓴다. 그래서 배포 고유 주소에서 점검하면 그 주소가 공유되고 Production 주소는 나가지 않는다. 다만 미리보기 이미지는 Production의 `og.jpg`라서, 카카오가 지금의 임시 사진을 캐시할 수 있다. G6 3단계의 공유 디버거 캐시 초기화로 갱신한다.
+- 실기기: 갤럭시 S24 Ultra와 iPhone 14 Pro에서 이상 없음(사용자 보고). 항목별 기록은 G5B-1에서 다룬다.
+- Vercel 대시보드에 'Node.js Version Override' 안내가 있다. `package.json` `engines.node: 24.x`가 프로젝트 설정보다 우선한다는 뜻이고, 의도한 동작이다.
+- 제안된 Speed Insights(분석 도구)는 켜지 않았다(분석 도구 금지).
