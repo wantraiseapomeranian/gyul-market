@@ -1,10 +1,14 @@
 // tests/perf.spec.ts
 // 실험실(lab) 측정이다. 실기기도, 현장(field) 데이터도 아니다. CDP로 네트워크·CPU를 느리게 만든 Chromium에서 잰다.
 // DevTools 방식 스로틀링은 Lighthouse의 시뮬레이션 스로틀링보다 가혹하다. INP는 event timing으로 근사한 값이다.
+// 판정은 GitHub 호스트 러너(.github/workflows/perf.yml)에서 한다(사용자 결정 2026-11-06, AUDIT 'PERF-1 측정 신뢰성').
+// 로컬 PC는 실효 감속 배율과 속도가 크게 흔들려 건너뛴다. 참고 측정: PERF=1 npx playwright test tests/perf.spec.ts --project=m390
 import { test, expect } from '@playwright/test';
+import { appendFileSync } from 'node:fs';
 
 test('모바일 LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 (실험실)', async ({ page, context }, testInfo) => {
   test.skip(testInfo.project.name !== 'm390', 'm390에서만 측정');
+  test.skip(!process.env.CI && !process.env.PERF, '판정은 GitHub 러너에서(perf 워크플로). 로컬 참고 측정은 PERF=1');
   test.setTimeout(120_000);
   await page.addInitScript(() => {
     Math.random = () => 0.999;
@@ -43,6 +47,7 @@ test('모바일 LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 (실험실)', async ({ 
   const summary = `LCP ${Math.round(lcp)}ms, INP ${Math.round(inp)}ms, CLS ${cls.toFixed(4)}`;
   testInfo.annotations.push({ type: 'perf', description: summary });
   console.log(`PERF ${summary} | LCP element: ${lcpEl}`);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `PERF ${summary} (기준 LCP ≤ 2500ms, INP ≤ 200ms, CLS ≤ 0.1)\n`);
   expect(lcp, 'LCP').toBeGreaterThan(0);
   expect(inp, 'INP 측정값(이벤트 타이밍 기록 없음이면 0)').toBeGreaterThan(0);
   expect(lcp, 'LCP ms').toBeLessThanOrEqual(2500);

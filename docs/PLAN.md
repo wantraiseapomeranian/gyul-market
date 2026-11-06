@@ -2004,7 +2004,7 @@ gh repo create wantraiseapomeranian/gyul-market --public --source . --remote ori
 git -c credential.helper= -c credential.helper='!gh auth git-credential' push -u origin main
 git ls-remote origin      # HEAD와 refs/heads/main만
 ```
-- [ ] **Step 6: 브랜치 운영.** 이후 변경은 `t<번호>-<요약>` 브랜치 → PR → 사용자 확인 → squash merge 순서로 한다. G5-B 이후에는 PR마다 Vercel Preview를 확인한다. `main` 직접 push는 하지 않는다.
+- [ ] **Step 6: 브랜치 운영.** 이후 변경은 `t<번호>-<요약>` 브랜치 → PR → 사용자 확인 → squash merge 순서로 한다. G5-B 이후에는 PR마다 Vercel Preview를 확인한다. `main` 직접 push는 하지 않는다. PR마다 `perf` 워크플로(GitHub 러너 성능 판정)가 돈다. GitHub에서 머지하므로 계정의 이메일 비공개 설정이 켜져 있어야 하고, 머지 뒤 `main` 커밋의 작성자·커미터 이메일이 noreply인지 확인한다(AUDIT G5A-2).
 
 **완료 조건:** public 저장소에 `main`만 있고, 커밋 이메일이 모두 noreply이며, 보안 검사 0건.
 

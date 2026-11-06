@@ -32,7 +32,7 @@ npm run lint
 npm test             # 단위 → 프로덕션 빌드 → E2E(390px·360px·WebKit)
 ```
 
-알려진 실패: 실험실 모바일 성능 테스트(`tests/perf.spec.ts`, PERF-1)가 아직 기준(LCP ≤ 2.5초, INP ≤ 200ms)을 넘습니다. 기록은 [`docs/AUDIT.md`](docs/AUDIT.md)에 있습니다.
+성능 테스트(`tests/perf.spec.ts`, 기준 LCP ≤ 2.5초·INP ≤ 200ms·CLS ≤ 0.1)는 GitHub 러너의 `perf` 워크플로에서 판정하고, 로컬 `npm test`에서는 건너뜁니다. 로컬 PC는 측정값이 크게 흔들리기 때문입니다([`docs/AUDIT.md`](docs/AUDIT.md) 'PERF-1 측정 신뢰성'). 로컬에서 참고로 재려면 `PERF=1 npx playwright test tests/perf.spec.ts --project=m390`을 실행합니다.
 
 ## 문서
 
