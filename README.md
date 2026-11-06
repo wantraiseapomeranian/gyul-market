@@ -1,12 +1,12 @@
 # 귤상회
 
-카카오톡 프로필 링크로 여는 20초짜리 가상 감귤 상점 체험입니다. 상품을 보고, 시료를 골라 당도 검사를 해 보면 됩니다.
+카카오톡 프로필 링크로 여는 짧은 가상 감귤 상점 체험입니다. 상품을 보고 구매하기를 눌러 보세요.
 
 비상업 개인 프로젝트입니다. 실제 판매·결제·회원가입은 없고, 입력 폼·서버 기능·분석 도구·런타임 외부 요청도 없습니다.
 
-| 상품 | 당도 검사표 | 측정 |
-|---|---|---|
-| <img src="tests/__screenshots__/m390/1-product.png" width="240" alt="상품 화면"> | <img src="tests/__screenshots__/m390/2-select.png" width="240" alt="당도 검사표 화면"> | <img src="tests/__screenshots__/m390/3-measure.png" width="240" alt="당도 측정 화면"> |
+| 상품 | 수량 선택 |
+|---|---|
+| <img src="tests/__screenshots__/m390/1-product.png" width="240" alt="상품 화면"> | <img src="tests/__screenshots__/m390/1b-qty.png" width="240" alt="수량 선택 시트"> |
 
 ## 기술 스택
 
