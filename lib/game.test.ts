@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   reduce, initialState, assignBrix, gradeOf, readingAt, formatDocDate,
-  BRIX_VALUES, TAPS_REQUIRED, type GameState, type GameEvent, type BrixMap,
+  BRIX_VALUES, TAPS_REQUIRED, PRICE, MAX_QTY, clampQty, formatWon, type GameState, type GameEvent, type BrixMap,
 } from './game.ts';
 
 const FIXED: BrixMap = { A: 12.4, B: 14.2, C: 15.8 };
@@ -104,4 +104,11 @@ test('다시 검사: 결과·엔딩 → 선택, 당도 재배정, 선택·탭 �
   for (const s of [result, run(result, { type: 'judge' }, { type: 'reveal' })]) {
     assert.deepEqual(reduce(s, { type: 'retry', brix: NEW }), { screen: 'select', brix: NEW, pick: null, taps: 0 });
   }
+});
+
+test('수량은 1~5박스로 고정되고 총액은 박스당 29,900원이다', () => {
+  assert.deepEqual([0, 1, 3, 5, 6, -2].map(clampQty), [1, 1, 3, 5, 5, 1]);
+  assert.equal(MAX_QTY, 5);
+  assert.equal(formatWon(PRICE), '29,900');
+  assert.equal(formatWon(PRICE * MAX_QTY), '149,500');
 });

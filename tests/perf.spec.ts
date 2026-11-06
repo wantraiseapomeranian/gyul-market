@@ -33,7 +33,9 @@ test('모바일 LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 (실험실)', async ({ 
   const read = () => page.evaluate(() => (window as unknown as { __m: { lcp: number; lcpEl: string; cls: number; inp: number } }).__m);
   const { lcp, lcpEl } = await read(); // LCP는 첫 입력 뒤 갱신이 멈추므로 상호작용 전에 읽는다
 
-  await page.getByRole('button', { name: /당도 검사 받기/ }).click();
+  await page.locator('.bar').getByRole('button', { name: '구매하기' }).click();
+  await page.getByRole('dialog', { name: '수량 선택' }).getByRole('button', { name: '구매하기' }).click();
+  await page.getByRole('button', { name: '당도 검사 시작하기' }).click();
   await page.locator('label', { has: page.getByRole('radio', { name: /시료 C/ }) }).click();
   await page.getByRole('button', { name: 'C 시료 검사 시작' }).click();
   const fruit = page.getByRole('button', { name: /귤 누르기/ });

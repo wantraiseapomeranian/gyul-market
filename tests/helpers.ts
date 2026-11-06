@@ -16,8 +16,32 @@ export async function open(page: Page, opts: { random?: number; reducedMotion?: 
 export const pickRow = (page: Page, f: Fruit) =>
   page.locator('label', { has: page.getByRole('radio', { name: new RegExp(`시료 ${f}`) }) });
 
+export const sheet = (page: Page) => page.getByRole('dialog', { name: '수량 선택' });
+export const notice = (page: Page) => page.getByRole('dialog', { name: '잠깐! 구매 전 확인해 주세요' });
+export const productCta = (page: Page) => page.locator('.bar').getByRole('button', { name: '구매하기' });
+
+// 여는 애니메이션(실제 시간)이 끝날 때까지 기다린다. 그동안은 바깥 누름이 무시된다(연타 보호)
+const opened = (d: ReturnType<typeof sheet>) =>
+  expect.poll(() => d.evaluate((el) => el.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
+
+/** 상품 → 구매하기 → 수량 시트 */
+export async function toSheet(page: Page) {
+  await productCta(page).click();
+  await expect(sheet(page)).toBeVisible();
+  await opened(sheet(page));
+}
+
+/** 수량 시트 → 구매하기 → 당도 검사 안내 모달 */
+export async function toNotice(page: Page) {
+  await toSheet(page);
+  await sheet(page).getByRole('button', { name: '구매하기' }).click();
+  await expect(notice(page)).toBeVisible();
+  await opened(notice(page));
+}
+
 export async function toSelect(page: Page) {
-  await page.getByRole('button', { name: /당도 검사 받기/ }).click();
+  await toNotice(page);
+  await notice(page).getByRole('button', { name: '당도 검사 시작하기' }).click();
   await expect(page.getByRole('heading', { name: '당도 검사', exact: true })).toBeVisible();
 }
 

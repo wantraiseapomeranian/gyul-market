@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { open, toSelect, toMeasure, toResult, toEnding } from './helpers';
+import { open, toSelect, toMeasure, toResult, toEnding, toSheet, toNotice, productCta, sheet, notice } from './helpers';
 
 async function noViolations(page: Page) {
   await page.clock.resume(); // axe는 setTimeout을 쓴다: open()이 멈춘 시계를 풀어야 분석이 끝난다
@@ -11,6 +11,8 @@ async function noViolations(page: Page) {
 test.describe('axe', () => {
   test.beforeEach(async ({ page }) => { await open(page); });
   test('상품', async ({ page }) => { await noViolations(page); });
+  test('수량 시트', async ({ page }) => { await toSheet(page); await noViolations(page); });
+  test('안내 모달', async ({ page }) => { await toNotice(page); await noViolations(page); });
   test('선택', async ({ page }) => { await toSelect(page); await noViolations(page); });
   test('측정', async ({ page }) => { await toMeasure(page); await noViolations(page); });
   test('결과', async ({ page }) => { await toResult(page); await noViolations(page); });
@@ -19,7 +21,17 @@ test.describe('axe', () => {
 
 test('키보드만으로 엔딩까지 간다', async ({ page }) => {
   await open(page);
-  await page.getByRole('button', { name: /당도 검사 받기/ }).focus();
+  await productCta(page).focus();
+  await page.keyboard.press('Enter');
+  await expect(sheet(page).getByRole('button', { name: '닫기' })).toBeFocused(); // 열리면 창 안 첫 버튼으로
+  await page.keyboard.press('Tab');              // − (끝값이어도 초점은 받는다)
+  await page.keyboard.press('Tab');              // +
+  await page.keyboard.press('Enter');            // 2박스
+  await expect(sheet(page).locator('output')).toHaveText('2박스');
+  await page.keyboard.press('Tab');              // 구매하기
+  await page.keyboard.press('Enter');
+  await expect(notice(page).getByRole('button', { name: '닫기' })).toBeFocused();
+  await page.keyboard.press('Tab');              // 당도 검사 시작하기
   await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { name: '당도 검사', exact: true })).toBeFocused();
   await page.keyboard.press('Tab');              // 제목 다음: 시료 라디오 그룹(뒤로 버튼은 제목 앞)

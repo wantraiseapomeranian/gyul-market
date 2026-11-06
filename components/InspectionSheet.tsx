@@ -19,7 +19,7 @@ export function InspectionSheet({ s, today, mode, onPick }: Props) {
       <fieldset className="sheet" data-mode={mode}>
         <legend className="sr-only">검사할 시료</legend>
         <div className="sheet-row sheet-th" aria-hidden="true">
-          <span>시료</span><span /><span>규격</span><span>당도*</span>{select ? <span>선택</span> : null}
+          <span>시료</span><span /><span>규격</span><span>당도</span>{select ? <span>선택</span> : null}
         </div>
         {FRUITS.map((f) => {
           const gauge = (
@@ -50,7 +50,7 @@ export function InspectionSheet({ s, today, mode, onPick }: Props) {
         })}
       </fieldset>
       <div className="doc-foot">
-        <p>* 당도는 체험용 연출 수치이며 귤의 크기·색과 관계없이 정해집니다. 규격(2S·S·M)은 크기 등급입니다.</p>
+        <p>규격(2S·S·M)은 크기 등급입니다.</p>
         <span className="inspector">검사원<i>{select ? null : <Stamp shape="square" label="검사 완료">검사<br />필</Stamp>}</i></span>
       </div>
     </section>

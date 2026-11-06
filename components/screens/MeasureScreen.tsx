@@ -49,7 +49,6 @@ export function MeasureScreen({ s, dispatch, headingRef }: ScreenProps) {
       </ol>
       <p className="tap-note">{done ? '측정 완료' : '귤을 누르세요'}</p>
       <p className="sr-only" aria-live="polite">{s.taps > 0 ? `${s.taps}번째, ${v.toFixed(1)} 브릭스` : ''}</p>
-      <p className="m-note">측정값은 연출된 수치입니다</p>
     </main>
   );
 }

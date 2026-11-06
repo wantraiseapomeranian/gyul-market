@@ -10,7 +10,7 @@ const hahmlet = Hahmlet({ weight: '700', display: 'swap', preload: false, variab
 
 const prod = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const TITLE = '제주 서귀포 햇귤 10kg · 29,900원 | 귤상회';
-const DESC = '노지 온주밀감 2S~M 혼합 · 무료배송 · 당도 검사 10초';
+const DESC = '노지 온주밀감 2S~M 혼합 · 무료배송';
 
 export const metadata: Metadata = {
   metadataBase: new URL(prod ? `https://${prod}` : 'http://localhost:3000'),

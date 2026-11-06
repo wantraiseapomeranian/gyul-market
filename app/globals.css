@@ -89,7 +89,6 @@
   /* 하단 바 */
   .bar { position: fixed; bottom: 0; left: 50%; z-index: 20; width: 100%; max-width: 430px; transform: translateX(-50%); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--color-paper); border-top: 1px solid var(--color-line); }
   .bar-row { display: flex; gap: 8px; }
-  .bar-note { margin-top: 6px; text-align: center; font-size: 11px; color: var(--color-mute); }
   .btn-primary { flex: 1; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-camellia); color: #fff; font-size: 16.5px; font-weight: 700; line-height: 1.25; }
   .btn-primary small { margin-top: 2px; font-size: 11.5px; font-weight: 500; opacity: .88; }
   .btn-primary:disabled { cursor: default; background: #d9d9d9; color: var(--color-ink-2); }
@@ -135,7 +134,7 @@
   .pending small { grid-column: 1 / -1; margin-top: 2px; font-size: 12px; color: var(--color-mute); }
 
   /* ③ 측정 */
-  .screen-measure { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+  .screen-measure { display: flex; flex-direction: column; height: 100vh; height: 100dvh; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
   .instrument { flex: 1; min-height: 0; display: grid; place-items: center; }
   .dial { position: relative; width: 262px; height: 262px; display: grid; place-items: center; border: 1px dashed var(--color-dash); border-radius: 9999px; }
   .dial-size { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); padding: 0 6px; background: var(--color-paper); font-size: 11px; color: var(--color-mute); }
@@ -158,7 +157,6 @@
   .stamp-cells li[data-state="next"] { border: 1.5px dashed var(--color-ink); }
   .stamp-cells .stamp { width: 70%; height: 70%; font-size: 14px; transform: rotate(-12deg); animation: stamp-in 140ms var(--ease-in-stamp) both; }
   .tap-note { padding-top: 14px; text-align: center; font-size: 15px; font-weight: 600; }
-  .m-note { padding: 6px 0 calc(16px + env(safe-area-inset-bottom)); text-align: center; font-size: 11px; color: var(--color-mute); }
 
   /* ⑤ 판정 전환 */
   .judging { position: fixed; top: 0; bottom: 0; left: 50%; z-index: 30; width: 100%; max-width: 430px; transform: translateX(-50%); overflow: hidden; background: var(--color-ink); color: #fff; }
@@ -194,7 +192,39 @@
   .share-two button { height: 48px; border: 1px solid rgb(255 255 255 / .75); border-radius: 8px; color: #fff; font-size: 14.5px; font-weight: 600; }
   .share-manual { margin-top: 10px; font-size: 12px; color: rgb(255 255 255 / .94); }
   .share-manual input { width: 100%; height: 44px; margin-top: 6px; padding: 0 12px; background: var(--color-paper); border: 1px solid #cfcfcf; border-radius: 0; color: var(--color-ink); font-size: 14px; }
-  .disc { padding: 14px 20px calc(22px + env(safe-area-inset-bottom)); text-align: center; font-size: 11.5px; line-height: 1.6; opacity: .88; }
+  .disc { padding: 16px 20px calc(24px + env(safe-area-inset-bottom)); text-align: center; font-size: 13px; line-height: 1.65; opacity: .94; }
+
+  /* 구매 진입: 수량 시트 · 안내 모달(<dialog>). 그림자·둥근 모서리 없이 선으로만 나눈다 */
+  html:has(.dlg[open]) { overflow: hidden; }
+  .dlg { padding: 0; border: 0; background: var(--color-paper); color: var(--color-ink); }
+  .dlg::backdrop { background: rgb(20 20 20 / .5); }
+  .dlg-head { display: grid; grid-template-columns: 1fr 44px; align-items: center; min-height: 52px; padding: 0 2px 0 16px; border-bottom: 1px solid var(--color-line); }
+  .dlg-head h2 { font-size: 16px; font-weight: 600; letter-spacing: -.02em; }
+  .buy-sheet { width: 100%; max-width: 430px; margin: auto auto 0; padding-bottom: env(safe-area-inset-bottom); }
+  .buy-item { padding: 16px; }
+  .buy-name { font-size: 15px; font-weight: 600; }
+  .buy-opt { margin-top: 1px; font-size: 13px; color: var(--color-mute); }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
+  .buy-unit { font-size: 13px; color: var(--color-ink-2); font-variant-numeric: tabular-nums; }
+  .stepper { flex: none; display: grid; grid-template-columns: 44px 64px 44px; height: 44px; border: 1px solid #cfcfcf; border-radius: 8px; }
+  .stepper button { font-size: 20px; line-height: 1; color: var(--color-ink); }
+  .stepper button[aria-disabled="true"] { cursor: default; color: #c4c4c4; }
+  .stepper output { display: grid; place-items: center; border-inline: 1px solid #cfcfcf; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .buy-total { display: flex; justify-content: space-between; align-items: baseline; margin: 0 16px; padding: 14px 0 2px; border-top: 1px solid var(--color-ink); font-variant-numeric: tabular-nums; }
+  .buy-total span { font-size: 14px; color: var(--color-ink-2); }
+  .buy-total strong { font-size: 22px; font-weight: 800; letter-spacing: -.03em; }
+  .buy-total small { margin-left: 1px; font-size: 16px; font-weight: 700; }
+  .buy-cta { display: flex; padding: 12px; }
+  .buy-notice { width: calc(100% - 32px); max-width: 360px; margin: auto; }
+  .buy-notice .dlg-head h2 { font-weight: 700; font-size: 17px; }
+  .notice-body { padding: 16px 16px 4px; font-size: 15px; line-height: 1.65; }
+  .notice-body p + p { margin-top: 8px; color: var(--color-ink-2); }
+  .buy-sheet[open] { animation: sheet-up 220ms var(--ease-out-quart) both; }
+  .buy-notice[open] { animation: fade 160ms var(--ease-out-quart) both; }
+  @media (min-width: 431px) {
+    .buy-sheet { width: 400px; margin: auto; }
+    .buy-sheet[open] { animation-name: fade; }
+  }
 }
 
 @keyframes fade { from { opacity: 0; } }
@@ -202,8 +232,10 @@
 @keyframes rise { from { transform: translateY(110%); } }
 @keyframes slam { from { opacity: 0; transform: rotate(-12deg) scale(2.3); } to { opacity: .9; transform: rotate(-12deg) scale(1); } }
 @keyframes stamp-fade { from { opacity: 0; } to { opacity: .9; } }
+@keyframes sheet-up { from { transform: translateY(100%); } }
 
 @media (prefers-reduced-motion: reduce) {
+  .buy-sheet[open] { animation: fade 120ms both; }
   .paper, .judging-msg { animation: fade 200ms both; }
   .big-stamp { animation: stamp-fade 120ms 400ms both; }
   .stamp-cells .stamp { animation: fade 120ms both; }

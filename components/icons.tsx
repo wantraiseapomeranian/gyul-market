@@ -3,6 +3,9 @@ const base = { fill: 'none', stroke: 'currentColor', strokeLinecap: 'round', str
 export const BackIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" strokeWidth={1.8} aria-hidden="true" {...base}><path d="M15 5l-7 7 7 7" /></svg>
 );
+export const CloseIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" strokeWidth={1.8} aria-hidden="true" {...base}><path d="M6 6l12 12M18 6 6 18" /></svg>
+);
 export const CheckIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" stroke="#fff" strokeWidth={3} fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
 );

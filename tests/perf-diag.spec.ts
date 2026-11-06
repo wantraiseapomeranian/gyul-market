@@ -17,7 +17,7 @@ type Run = {
   interactions: { name: string; ms: number }[];
 };
 const runs: Run[] = [];
-const STEPS = ['CTA 당도 검사 받기', '행 선택 C', 'C 시료 검사 시작', '탭 1', '탭 2', '탭 3', '탭 4', '탭 5', '최종 판정 받기'];
+const STEPS = ['구매하기(상품)', '구매하기(시트)', 'CTA 당도 검사 시작하기', '행 선택 C', 'C 시료 검사 시작', '탭 1', '탭 2', '탭 3', '탭 4', '탭 5', '최종 판정 받기'];
 
 test.describe.configure({ mode: 'serial' });
 
@@ -74,7 +74,11 @@ for (let i = 1; i <= RUNS; i++) {
       const read = () => page.evaluate(() => (window as unknown as { __m: M }).__m);
       const before = await read(); // LCP는 첫 입력 뒤 갱신이 멈추므로 상호작용 전에 읽는다
 
-      await page.getByRole('button', { name: /당도 검사 받기/ }).click();
+      await page.locator('.bar').getByRole('button', { name: '구매하기' }).click();
+      await pause(1000);
+      await page.getByRole('dialog', { name: '수량 선택' }).getByRole('button', { name: '구매하기' }).click();
+      await pause(1000);
+      await page.getByRole('button', { name: '당도 검사 시작하기' }).click();
       await pause(1000);
       await page.locator('label', { has: page.getByRole('radio', { name: /시료 C/ }) }).click();
       await pause(1000);
