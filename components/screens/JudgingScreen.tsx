@@ -2,7 +2,7 @@ import { DOC_NO } from '@/lib/game';
 import { Stamp } from '../Stamp';
 import type { ScreenProps } from './types';
 
-const FIELDS = ['시료', '측정 당도', '판정', '배송 예정', '결제 금액'];
+const FIELDS = ['시료', '측정 당도', '판정', '구매 의향', '배송·결제'];
 
 export function JudgingScreen({ headingRef }: Pick<ScreenProps, 'headingRef'>) {
   return (

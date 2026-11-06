@@ -1,4 +1,4 @@
-import { assignBrix } from '@/lib/game';
+import { assignBrix, pickLine } from '@/lib/game';
 import { InspectionSheet } from '../InspectionSheet';
 import { BottomBar } from '../BottomBar';
 import type { ScreenProps } from './types';
@@ -13,7 +13,7 @@ export function ResultScreen({ s, dispatch, headingRef, today }: ScreenProps) {
       </div>
       <BottomBar>
         <button className="btn-ghost" onClick={() => dispatch({ type: 'retry', brix: assignBrix(Math.random) })}>다시 검사</button>
-        <button className="btn-primary" onClick={() => dispatch({ type: 'judge' })}>최종 판정 받기</button>
+        <button className="btn-primary" onClick={() => dispatch({ type: 'judge', line: pickLine(Math.random) })}>최종 판정 받기</button>
       </BottomBar>
     </main>
   );

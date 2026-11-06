@@ -96,6 +96,6 @@ export function Game({ product }: { product: ReactNode }) {
     case 'judging':
       return <JudgingScreen headingRef={headingRef} />;
     case 'ending':
-      return <EndingScreen {...props} />;
+      return <EndingScreen {...props} qty={qty} />;
   }
 }
