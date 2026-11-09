@@ -18,7 +18,7 @@
 - 앱 웹폰트: Pretendard(OFL 1.1, npm에서 자체 호스팅), Hahmlet(OFL 1.1 (Google Fonts 표기), next/font로 자체 호스팅).
 - 촬영지: 대표 사진은 촬영지 정보가 없다. 시료 A·B·C 사진(이전 대표 사진)은 군산시에서 찍은 것이다. 상품명의 "제주 서귀포"는 콘셉트 문구일 뿐이다 (PROJECT §5).
 - 편집 범위: 크롭·좌우 반전·노출(밝기)·약한 채도·압축만 한다. 합성(OG 태그 제외)·부분 리터칭·AI 생성은 하지 않는다(DESIGN §7).
-- 허용: 상업·비상업 모두 무료로 내려받아 복사·수정·사용 가능, 허락과 출처 표기 불필요(표기는 권장하며 상품 푸터에 적는다: Jonathan Pielmayer, insung yoon, Luis Guaman, Hoyoung Choi, Jason Leung, Mila).
+- 허용: 상업·비상업 모두 무료로 내려받아 복사·수정·사용 가능, 허락과 출처 표기 불필요(표기는 권장 사항이다. 상품 푸터에 바탕과 같은 글자색으로 적어 드래그로 선택하면 보인다: Jonathan Pielmayer, insung yoon, Luis Guaman, Hoyoung Choi, Jason Leung, Mila).
 - 금지: 의미 있는 수정 없이 사진 자체를 파는 것, Unsplash 사진을 모아 비슷한 경쟁 서비스를 만드는 것.
 - 원본 재현: `assets/images/hero.jpg`와 `scripts/og/og-bg.jpg`는 위 '처리' 순서대로 sharp(Next.js 의존성)로 만들었다. sharp는 한 파이프라인 안에서 extract를 flop보다 먼저 하므로, 반전을 먼저 무손실(raw)로 끝낸 뒤 자른다(AUDIT T20).
 - 검토했지만 쓰지 않은 후보(T20): Pexels 2986(Breakingpic, 무료, 밝은 나무·따뜻한 조명이라 톤이 다름), Pexels 20650065(Yuan Cao, 무료, 흰 접시·크림 천이라 DESIGN §7·§9.1과 충돌).

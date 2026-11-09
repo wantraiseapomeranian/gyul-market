@@ -4,7 +4,8 @@ import { open, toSelect, toMeasure, toResult, toEnding, toSheet, toNotice, produ
 
 async function noViolations(page: Page) {
   await page.clock.resume(); // axe는 setTimeout을 쓴다: open()이 멈춘 시계를 풀어야 분석이 끝난다
-  const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+  // .foot은 일부러 바탕색으로 숨긴 사진 출처다(DESIGN §10)
+  const r = await new AxeBuilder({ page }).exclude('.foot').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
   expect(r.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
 }
 
