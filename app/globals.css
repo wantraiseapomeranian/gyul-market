@@ -70,6 +70,10 @@
   .brand-line { font-size: 13px; color: var(--color-ink-2); }
   .title { margin-top: 5px; font-size: 20px; font-weight: 700; line-height: 1.4; letter-spacing: -.035em; }
   .desc { margin-top: 1px; font-size: 14px; color: var(--color-mute); }
+  .was { margin-top: 12px; display: flex; align-items: baseline; gap: 6px; font-variant-numeric: tabular-nums; }
+  .was .rate { font-size: 15px; font-weight: 800; color: var(--color-camellia); }
+  .was del { font-size: 14px; color: var(--color-mute); }
+  .was + .price { margin-top: 0; }
   .price { margin-top: 14px; display: flex; align-items: baseline; font-variant-numeric: tabular-nums; }
   .price strong { font-size: 25px; font-weight: 800; letter-spacing: -.03em; }
   .price .won { margin-left: 1px; font-size: 18px; font-weight: 700; }
@@ -81,10 +85,17 @@
   .story { padding: 36px 16px 0; }
   .story h2 { font-family: var(--font-serif); font-weight: 700; font-size: 21px; line-height: 1.42; letter-spacing: -.03em; }
   .story p { margin-top: 12px; font-size: 15px; line-height: 1.75; }
-  .story figure { margin: 24px -16px 0; }
-  .story img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
-  .story figcaption { padding: 8px 16px 0; font-size: 12px; color: var(--color-mute); }
-  .foot { padding: 28px 16px; font-size: 12px; line-height: 1.7; color: var(--color-mute); }
+  .notes { padding: 0 16px; }
+  .notes h2 { margin-top: 32px; font-size: 16px; font-weight: 700; line-height: 1.5; letter-spacing: -.02em; }
+  .notes p, .notes ul { margin-top: 8px; font-size: 15px; line-height: 1.75; }
+  .notes ul { padding-left: 18px; list-style: disc; }
+  .notes .bleed { width: calc(100% + 32px); max-width: none; height: auto; aspect-ratio: 4 / 3; margin: 20px -16px 0; object-fit: cover; }
+  .notes + .band { margin-top: 32px; }
+  .photo { margin-top: 24px; }
+  .photo img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+  .photo figcaption { padding: 8px 16px 0; font-size: 12px; color: var(--color-mute); }
+  /* 이스터에그: 바탕과 같은 색이라 드래그해야 보인다(DESIGN §5 ①) */
+  .foot { padding: 28px 16px; font-size: 12px; line-height: 1.7; color: var(--color-paper); }
 
   /* 하단 바 */
   .bar { position: fixed; bottom: 0; left: 50%; z-index: 20; width: 100%; max-width: 430px; transform: translateX(-50%); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--color-paper); border-top: 1px solid var(--color-line); }

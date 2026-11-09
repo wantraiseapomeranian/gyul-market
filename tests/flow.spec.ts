@@ -14,15 +14,22 @@ test.describe('① 상품 상세', () => {
   test('핵심 정보와 CTA가 첫 화면에 보인다', async ({ page }) => {
     await expect(page.getByRole('heading', PRODUCT_H1)).toBeInViewport();
     await expect(page.getByText('29,900', { exact: true })).toBeInViewport();
-    await expect(page.getByText('무료배송')).toBeInViewport();
+    await expect(page.getByText('무료배송', { exact: true })).toBeInViewport();
     await expect(productCta(page)).toBeInViewport();
   });
 
   test('동작하지 않는 UI와 생산 이력 표기가 없다', async ({ page }) => {
     await expect(page.getByRole('button', { name: /검색|장바구니|찜/ })).toHaveCount(0);
     await expect(page.getByRole('link', { name: /검색|장바구니/ })).toHaveCount(0);
-    await expect(page.getByText(/원산지|상품정보제공고시|수확일|생산자/)).toHaveCount(0);
+    await expect(page.getByText(/상품정보제공고시|수확일|생산자/)).toHaveCount(0);
     await expect(page.getByText('1 / 4')).toHaveCount(0);
+  });
+
+  test('할인 전 가격과 할인율, 원산지를 표기한다', async ({ page }) => {
+    await expect(page.locator('del')).toHaveText('35,000원');
+    await expect(page.locator('del')).toBeInViewport();
+    await expect(page.getByText('14%', { exact: true })).toBeVisible();
+    await expect(page.getByText('국내산(제주)')).toBeVisible();
   });
 
   test('게임을 예고하거나 가상 상점이라고 밝히는 문구가 없다(고지는 엔딩에만)', async ({ page }) => {
