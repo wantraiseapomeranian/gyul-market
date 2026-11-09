@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import hero from '@/assets/images/hero.jpg';
 import story from '@/assets/images/story.jpg';
+import orchard from '@/assets/images/orchard.jpg';
+import pile from '@/assets/images/pile.jpg';
+import peeled from '@/assets/images/peeled.jpg';
 import { Wordmark } from './Wordmark';
 import { SortingTag } from './SortingTag';
 
@@ -31,13 +34,19 @@ export function ProductPage() {
       </dl>
       <section className="story">
         <h2>껍질을 까는 순간,<br />달콤한 제주를 만나보세요.</h2>
-        <p>귤상회는 크기별로 골라 담아 보냅니다.</p>
+        <p>귤상회는 하나하나 선별해 담아 보냅니다.</p>
       </section>
+      <figure className="photo">
+        <Image src={story} alt="수확 자루에 담긴 노지감귤" sizes={SIZES} />
+        <figcaption>노지감귤 수확</figcaption>
+      </figure>
       <section className="notes">
         <h2>상품 설명</h2>
         <p>노지 온주밀감은 비닐하우스 없이 바깥 밭에서 햇볕과 바람을 맞으며 자란 귤입니다. 제주 노지감귤은 보통 10월부터 12월 사이에 수확합니다. 수확 시기에 따라 껍질에 초록빛이 남아 있을 수 있으며, 크기와 모양은 조금씩 다를 수 있습니다.</p>
+        <Image className="bleed" src={orchard} alt="귤이 달린 나무들 사이 흙길에 노란 수확 상자가 놓인 귤밭" sizes={SIZES} />
         <h2>크기 안내</h2>
         <p>2S·S·M은 귤의 지름으로 나눈 크기 등급입니다. 이 상품은 세 가지 크기를 섞어 담으며, 크기를 고를 수는 없습니다.</p>
+        <Image className="bleed" src={pile} alt="잎이 달린 크고 작은 귤이 상자에 가득 담긴 모습" sizes={SIZES} />
         <h2>보관과 드시는 방법</h2>
         <ul>
           <li>받으신 뒤에는 상자를 열어 서늘하고 그늘진 곳에 보관해 주세요.</li>
@@ -46,11 +55,8 @@ export function ProductPage() {
           <li>무르거나 곰팡이가 보이는 귤은 다른 귤로 번지기 전에 바로 골라내 주세요.</li>
           <li>눌린 귤부터 먼저 드시길 권합니다.</li>
         </ul>
+        <Image className="bleed" src={peeled} alt="어두운 나무 탁자 위에 놓인 귤과 껍질을 벗긴 귤 조각" sizes={SIZES} />
       </section>
-      <figure className="photo">
-        <Image src={story} alt="수확 자루에 담긴 노지감귤" sizes={SIZES} />
-        <figcaption>노지감귤 수확</figcaption>
-      </figure>
       <div className="band" />
       <section className="notes">
         <h2>배송 안내</h2>
@@ -67,7 +73,7 @@ export function ProductPage() {
         </ul>
       </section>
       <footer className="foot">
-        <p>사진: Unsplash · Jonathan Pielmayer, insung yoon, Luis Guaman</p>
+        <p>사진: Unsplash · Jonathan Pielmayer, insung yoon, Luis Guaman, Hoyoung Choi, Jason Leung, Mila</p>
       </footer>
     </main>
   );
