@@ -23,7 +23,8 @@ export const metadata: Metadata = {
     siteName: '귤상회',
     title: TITLE,
     description: DESC,
-    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: '잎 달린 귤과 껍질을 벗긴 귤, 선별 태그' }],
+    // 카카오톡이 같은 이미지 주소의 옛 썸네일을 계속 보여 줘서 쿼리로 주소를 바꾼다. og.jpg를 교체하면 v도 올린다.
+    images: [{ url: '/og.jpg?v=2', width: 1200, height: 630, alt: '잎 달린 귤과 껍질을 벗긴 귤, 선별 태그' }],
   },
 };
 

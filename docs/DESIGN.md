@@ -269,7 +269,7 @@
 |---|---|
 | `og:title` | 제주 서귀포 햇귤 10kg · 29,900원 \| 귤상회 |
 | `og:description` | 노지 온주밀감 2S~M 혼합 · 무료배송 |
-| `og:image` | `/og.jpg` 1200×630 (`og:image:width/height` 명시) |
+| `og:image` | `/og.jpg?v=2` 1200×630 (`og:image:width/height` 명시, 이미지를 교체하면 `v`를 올린다) |
 | `og:type` / `og:locale` | website / ko_KR |
 | `<title>` | 제주 서귀포 햇귤 10kg \| 귤상회 |
 | Web Share | title '귤상회', text '제주 서귀포 햇귤 10kg, 29,900원', url = 사이트 루트 |
