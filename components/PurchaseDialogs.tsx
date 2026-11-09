@@ -56,7 +56,7 @@ export function PurchaseDialogs({ overlay, qty, setQty, onBuy, onStart, onClose,
           <p className="buy-name">제주 서귀포 햇귤 10kg</p>
           <p className="buy-opt">노지 온주밀감 · 2S~M 크기 혼합</p>
           <div className="buy-row">
-            <span className="buy-unit">{formatWon(PRICE)}원 / 1박스</span>
+            <span className="buy-unit">{formatWon(PRICE)}원 / 1박스<small>1회 최대 {MAX_QTY}박스</small></span>
             {/* 비활성은 aria-disabled: 끝값에 닿아도 초점이 버튼에 남는다 */}
             <div className="stepper" role="group" aria-label="수량">
               <button aria-label="한 박스 빼기" aria-disabled={qty <= 1} onClick={() => step(-1)}>−</button>

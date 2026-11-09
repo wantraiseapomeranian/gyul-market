@@ -32,6 +32,12 @@ test.describe('① 상품 상세', () => {
     await expect(page.getByText('국내산(제주)')).toBeVisible();
   });
 
+  test('수량 제한을 정보 행과 수량 시트에 안내한다', async ({ page }) => {
+    await expect(page.locator('.info').getByText('1회 최대 5박스')).toBeVisible();
+    await toSheet(page);
+    await expect(sheet(page).getByText('1회 최대 5박스')).toBeVisible();
+  });
+
   test('게임을 예고하거나 가상 상점이라고 밝히는 문구가 없다(고지는 엔딩에만)', async ({ page }) => {
     await expect(page.locator('main')).not.toContainText(/당도 검사|가상|연출|판매·결제/);
   });

@@ -6,6 +6,7 @@ import pile from '@/assets/images/pile.jpg';
 import peeled from '@/assets/images/peeled.jpg';
 import { Wordmark } from './Wordmark';
 import { SortingTag } from './SortingTag';
+import { MAX_QTY } from '@/lib/game';
 
 const SIZES = '(max-width: 430px) 100vw, 430px';
 
@@ -30,6 +31,7 @@ export function ProductPage() {
         <div><dt>원산지</dt><dd>국내산(제주)</dd></div>
         <div><dt>품종</dt><dd>노지 온주밀감</dd></div>
         <div><dt>규격</dt><dd>10kg · 2S·S·M 혼합</dd></div>
+        <div><dt>수량</dt><dd>1회 최대 {MAX_QTY}박스</dd></div>
         <div><dt>보관</dt><dd>서늘하고 그늘진 곳</dd></div>
       </dl>
       <section className="story">
