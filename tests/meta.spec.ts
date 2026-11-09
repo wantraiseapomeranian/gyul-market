@@ -11,7 +11,7 @@ test('noindex, color-scheme, viewport-fit, OG', async ({ page }) => {
   expect(await meta('meta[name="viewport"]')).toContain('viewport-fit=cover');
   expect(await meta('meta[property="og:title"]')).toBe('제주 서귀포 햇귤 10kg · 29,900원 | 귤상회');
   expect(await meta('meta[property="og:description"]')).toBe('노지 온주밀감 2S~M 혼합 · 무료배송'); // 게임을 예고하지 않는다
-  expect(await meta('meta[property="og:image"]')).toMatch(/\/og\.jpg$/);
+  expect(await meta('meta[property="og:image"]')).toMatch(/\/og\.jpg\?v=2$/);
   expect(await meta('meta[property="og:image:width"]')).toBe('1200');
   await expect(page).toHaveTitle('제주 서귀포 햇귤 10kg | 귤상회');
 });
