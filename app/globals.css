@@ -218,6 +218,7 @@
   .buy-opt { margin-top: 1px; font-size: 13px; color: var(--color-mute); }
   .buy-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
   .buy-unit { font-size: 13px; color: var(--color-ink-2); font-variant-numeric: tabular-nums; }
+  .buy-unit small { display: block; margin-top: 2px; font-size: 12px; color: var(--color-mute); }
   .stepper { flex: none; display: grid; grid-template-columns: 44px 64px 44px; height: 44px; border: 1px solid #cfcfcf; border-radius: 8px; }
   .stepper button { font-size: 20px; line-height: 1; color: var(--color-ink); }
   .stepper button[aria-disabled="true"] { cursor: default; color: #c4c4c4; }
